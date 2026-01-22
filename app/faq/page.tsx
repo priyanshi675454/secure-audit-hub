@@ -265,7 +265,7 @@ export default function FAQPage() {
                 <Button 
                   className="w-full bg-gradient-to-r from-orange-600 to-purple-600"
                   onClick={() => {
-                    window.location.href = "mailto:support@secureaudithub.com?subject=Support%20Request%20-%20Audit%20Subsidy%20Program&body=Hi%20SecureAuditHub%20Team,%0A%0AI%20have%20a%20question%20about:%0A%0A[Please%20describe%20your%20question%20here]%0A%0AProject%20Name:%20%0AYour%20Email:%20%0A%0AThank%20you!";
+                    window.location.href = "mailto:support@priyanshigajjar46@gmail.com?subject=Support%20Request%20-%20Audit%20Subsidy%20Program&body=Hi%20SecureAuditHub%20Team,%0A%0AI%20have%20a%20question%20about:%0A%0A[Please%20describe%20your%20question%20here]%0A%0AProject%20Name:%20%0AYour%20Email:%20%0A%0AThank%20you!";
                   }}
                 >
                   Contact Support
