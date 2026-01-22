@@ -1,0 +1,57 @@
+
+Solana Audit Subsidy Program - Cohort V Applications by February 7th!
+
+The Solana Audit Subsidy Program is a $1M initiative designed to lower barriers for Solana projects seeking security audits from high-quality, pre-vetted auditors. The program is a joint initiative between leading audit firms, key Solana ecosystem stakeholders (Superteam, MonkeDAO, Jito), and Areta Market as the infrastructure partner.
+
+Following four successful cohorts with selected projects receiving subsidies ranging from $5k-$50k, the Solana Audit Subsidy Program is accepting applications for Cohort V until February 7th, 2026.
+
+
+How It Works
+Application: Projects apply via both the Subsidy Program Application Form and the Earn platform. Applications from Earn will be automatically matched to the general application form.
+
+On the Earn platform, make sure you add your website or X profile (whichever link can help us get the most info about your project) in the “Link to the Submission” field.
+
+Assessment: An expert panel comprised of Superteam, MonkeDAO, Jito, and Areta evaluates applications against a standardized rubric.
+
+Approval & Subsidy: Qualified projects receive a subsidy amount and are onboarded to the marketplace.
+
+Marketplace: Projects receive offers from participating audit providers.
+
+Redemption: When selecting quotes, participating projects can apply their subsidy to any offer on the marketplace with up to 30% coverage of costs.
+
+Redemption: Projects apply their Subsidy Voucher Code when selecting an offer
+
+Participating Audit Providers
+Adevar Labs Inc.
+
+Certora
+
+ChainSecurity
+
+Cyfrin
+
+Guardian
+
+Hacken
+
+Hexens
+
+Immunefi
+
+Oak Security
+
+Quantstamp
+
+QuillAudits
+
+Runtime Verification
+
+Sherlock
+
+Statemind
+
+Zellic
+
+
+
+https://areta.fillout.com/t/dXVAeK9vEsus
