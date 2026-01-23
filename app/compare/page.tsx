@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,8 @@ import {
   ArrowRight,
   Plus,
   X,
+  ExternalLink,
+  Mail,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -41,10 +44,12 @@ interface Provider {
   strengths: string[];
   turnaroundTime: string;
   teamSize: string;
-  languages: string[];
+  website: string;
+  contactEmail: string;
 }
 
 export default function ComparePage() {
+  // ALL 15 OFFICIAL PROVIDERS from Solana Audit Subsidy Program
   const allProviders: Provider[] = [
     {
       id: 1,
@@ -67,7 +72,8 @@ export default function ComparePage() {
       strengths: ["Fast turnaround", "Solana expertise", "Detailed reports"],
       turnaroundTime: "2-3 weeks",
       teamSize: "15-20 auditors",
-      languages: ["Rust", "TypeScript"],
+      website: "https://www.adevarlabs.com",
+      contactEmail: "contact@adevarlabs.com",
     },
     {
       id: 2,
@@ -87,13 +93,38 @@ export default function ComparePage() {
         postAuditSupport: true,
         emergencyResponse: false,
       },
-      strengths: ["Mathematical proofs", "High security", "Academic backing"],
+      strengths: ["Mathematical proofs", "Formal verification", "Academic backing"],
       turnaroundTime: "4-5 weeks",
       teamSize: "20-25 auditors",
-      languages: ["Rust", "Solidity"],
+      website: "https://www.certora.com",
+      contactEmail: "info@certora.com",
     },
     {
       id: 3,
+      name: "ChainSecurity",
+      logo: "CS",
+      rating: 4.7,
+      reviews: 42,
+      priceRange: "$18k - $55k",
+      avgDuration: "3-5 weeks",
+      projectsCompleted: 110,
+      specialties: ["Smart Contracts", "NFT", "Gaming"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["NFT expertise", "Gaming focus", "Comprehensive audits"],
+      turnaroundTime: "3-5 weeks",
+      teamSize: "18-22 auditors",
+      website: "https://chainsecurity.com",
+      contactEmail: "info@chainsecurity.com",
+    },
+    {
+      id: 4,
       name: "Cyfrin",
       logo: "CY",
       rating: 4.9,
@@ -113,10 +144,83 @@ export default function ComparePage() {
       strengths: ["Competitive pricing", "Fast delivery", "Great support"],
       turnaroundTime: "2-3 weeks",
       teamSize: "25-30 auditors",
-      languages: ["Rust", "TypeScript", "Move"],
+      website: "https://www.cyfrin.io",
+      contactEmail: "contact@cyfrin.io",
     },
     {
-      id: 4,
+      id: 5,
+      name: "Guardian",
+      logo: "GU",
+      rating: 4.6,
+      reviews: 35,
+      priceRange: "$16k - $50k",
+      avgDuration: "3-4 weeks",
+      projectsCompleted: 88,
+      specialties: ["Web3", "Smart Contracts", "DeFi"],
+      features: {
+        formalVerification: false,
+        bugBounty: false,
+        insurance: true,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Flexible engagement", "Insurance option", "Solana focus"],
+      turnaroundTime: "3-4 weeks",
+      teamSize: "12-18 auditors",
+      website: "https://guardianaudits.com",
+      contactEmail: "contact@guardianaudits.com",
+    },
+    {
+      id: 6,
+      name: "Hacken",
+      logo: "HA",
+      rating: 4.7,
+      reviews: 48,
+      priceRange: "$14k - $48k",
+      avgDuration: "3-5 weeks",
+      projectsCompleted: 125,
+      specialties: ["DeFi", "NFT", "Exchange"],
+      features: {
+        formalVerification: false,
+        bugBounty: true,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Blockchain security", "Global team", "Fast response"],
+      turnaroundTime: "3-5 weeks",
+      teamSize: "30+ auditors",
+      website: "https://hacken.io",
+      contactEmail: "sales@hacken.io",
+    },
+    {
+      id: 7,
+      name: "Hexens",
+      logo: "HE",
+      rating: 4.8,
+      reviews: 40,
+      priceRange: "$17k - $52k",
+      avgDuration: "3-4 weeks",
+      projectsCompleted: 102,
+      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Boutique firm", "High complexity", "Detailed analysis"],
+      turnaroundTime: "3-4 weeks",
+      teamSize: "10-15 auditors",
+      website: "https://hexens.io",
+      contactEmail: "contact@hexens.io",
+    },
+    {
+      id: 8,
       name: "Immunefi",
       logo: "IM",
       rating: 4.9,
@@ -136,10 +240,11 @@ export default function ComparePage() {
       strengths: ["Bug bounty platform", "Continuous security", "Insurance"],
       turnaroundTime: "2-3 weeks",
       teamSize: "50+ auditors",
-      languages: ["Rust", "Solidity", "TypeScript"],
+      website: "https://immunefi.com",
+      contactEmail: "contact@immunefi.com",
     },
     {
-      id: 5,
+      id: 9,
       name: "Oak Security",
       logo: "OA",
       rating: 4.8,
@@ -156,17 +261,162 @@ export default function ComparePage() {
         postAuditSupport: true,
         emergencyResponse: true,
       },
-      strengths: ["Solana native", "Deep ecosystem knowledge", "NFT focus"],
+      strengths: ["Solana native", "Deep ecosystem knowledge", "NFT expertise"],
       turnaroundTime: "3-4 weeks",
       teamSize: "15-20 auditors",
-      languages: ["Rust", "Anchor"],
+      website: "https://www.oaksecurity.io",
+      contactEmail: "hello@oaksecurity.io",
+    },
+    {
+      id: 10,
+      name: "Quantstamp",
+      logo: "QU",
+      rating: 4.7,
+      reviews: 50,
+      priceRange: "$18k - $60k",
+      avgDuration: "4-6 weeks",
+      projectsCompleted: 130,
+      specialties: ["DeFi", "Smart Contracts", "Protocols"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Industry veteran", "Major protocols", "Comprehensive"],
+      turnaroundTime: "4-6 weeks",
+      teamSize: "25-30 auditors",
+      website: "https://quantstamp.com",
+      contactEmail: "info@quantstamp.com",
+    },
+    {
+      id: 11,
+      name: "QuillAudits",
+      logo: "QA",
+      rating: 4.6,
+      reviews: 36,
+      priceRange: "$12k - $42k",
+      avgDuration: "2-4 weeks",
+      projectsCompleted: 92,
+      specialties: ["Smart Contracts", "DeFi", "Web3"],
+      features: {
+        formalVerification: false,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: false,
+      },
+      strengths: ["Cost-effective", "Quick turnaround", "Growing projects"],
+      turnaroundTime: "2-4 weeks",
+      teamSize: "15-20 auditors",
+      website: "https://www.quillaudits.com",
+      contactEmail: "audits@quillhash.com",
+    },
+    {
+      id: 12,
+      name: "Runtime Verification",
+      logo: "RV",
+      rating: 4.9,
+      reviews: 41,
+      priceRange: "$22k - $65k",
+      avgDuration: "5-7 weeks",
+      projectsCompleted: 78,
+      specialties: ["Formal Verification", "Protocols", "Infrastructure"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Academic-grade", "Formal methods", "Highest standards"],
+      turnaroundTime: "5-7 weeks",
+      teamSize: "12-18 auditors",
+      website: "https://runtimeverification.com",
+      contactEmail: "contact@runtimeverification.com",
+    },
+    {
+      id: 13,
+      name: "Sherlock",
+      logo: "SH",
+      rating: 4.8,
+      reviews: 46,
+      priceRange: "$16k - $54k",
+      avgDuration: "3-5 weeks",
+      projectsCompleted: 108,
+      specialties: ["DeFi", "Insurance", "Security"],
+      features: {
+        formalVerification: false,
+        bugBounty: true,
+        insurance: true,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Audit + insurance", "Comprehensive coverage", "Solana focus"],
+      turnaroundTime: "3-5 weeks",
+      teamSize: "20-25 auditors",
+      website: "https://www.sherlock.xyz",
+      contactEmail: "info@sherlock.xyz",
+    },
+    {
+      id: 14,
+      name: "Statemind",
+      logo: "ST",
+      rating: 4.7,
+      reviews: 39,
+      priceRange: "$15k - $48k",
+      avgDuration: "3-4 weeks",
+      projectsCompleted: 97,
+      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Security-first", "Comprehensive testing", "Detailed reports"],
+      turnaroundTime: "3-4 weeks",
+      teamSize: "15-20 auditors",
+      website: "https://statemind.io",
+      contactEmail: "hello@statemind.io",
+    },
+    {
+      id: 15,
+      name: "Zellic",
+      logo: "ZE",
+      rating: 4.9,
+      reviews: 58,
+      priceRange: "$20k - $65k",
+      avgDuration: "4-6 weeks",
+      projectsCompleted: 145,
+      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
+      features: {
+        formalVerification: true,
+        bugBounty: false,
+        insurance: false,
+        continuousMonitoring: true,
+        postAuditSupport: true,
+        emergencyResponse: true,
+      },
+      strengths: ["Top-tier auditor", "Major protocols", "Premium service"],
+      turnaroundTime: "4-6 weeks",
+      teamSize: "30+ auditors",
+      website: "https://www.zellic.io",
+      contactEmail: "inquiries@zellic.io",
     },
   ];
 
   const [selectedProviders, setSelectedProviders] = useState<Provider[]>([
-    allProviders[0],
-    allProviders[2],
-    allProviders[3],
+    allProviders[0], // Adevar Labs
+    allProviders[3], // Cyfrin
+    allProviders[7], // Immunefi
   ]);
 
   const [showAddProvider, setShowAddProvider] = useState(false);
@@ -188,6 +438,35 @@ export default function ComparePage() {
     p => !selectedProviders.find(sp => sp.id === p.id)
   );
 
+  // Contact provider via email
+  const handleContactProvider = (provider: Provider) => {
+    const subject = encodeURIComponent(`Solana Audit Inquiry - Subsidy Program Cohort V`);
+    const body = encodeURIComponent(
+      `Hi ${provider.name} team,\n\n` +
+      `I'm applying for the Solana Audit Subsidy Program (Cohort V) and interested in your audit services.\n\n` +
+      `Project Details:\n` +
+      `- Project Name: [Your Project]\n` +
+      `- Project Type: [DeFi/NFT/Gaming/etc.]\n` +
+      `- GitHub Repository: [Your Repo URL]\n` +
+      `- Expected Launch: [Date]\n` +
+      `- Lines of Code: [Approx.]\n\n` +
+      `I have been approved for the subsidy program and can apply up to 30% coverage (max $50k) via Subsidy Voucher Code.\n\n` +
+      `Could you please provide:\n` +
+      `1. Quote for audit services\n` +
+      `2. Estimated timeline\n` +
+      `3. Availability for Q1/Q2 2026\n\n` +
+      `Thank you!\n\n` +
+      `Best regards`
+    );
+    
+    window.location.href = `mailto:${provider.contactEmail}?subject=${subject}&body=${body}`;
+  };
+
+  // Visit provider website
+  const handleVisitWebsite = (website: string) => {
+    window.open(website, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-20 px-4">
       <div className="max-w-7xl mx-auto">
@@ -199,15 +478,18 @@ export default function ComparePage() {
         >
           <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
             <Shield className="w-4 h-4 mr-2" />
-            Side-by-Side Comparison
+            15 Approved Providers - Cohort V
           </Badge>
           <h1 className="text-5xl font-bold mb-4">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Compare Providers
+              Compare Audit Providers
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Make an informed decision. Compare features, pricing, and expertise side by side.
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4">
+            All 15 officially approved providers for the Solana Audit Subsidy Program. Compare features, pricing, and expertise side-by-side.
+          </p>
+          <p className="text-sm text-gray-500">
+            Apply subsidy voucher code for up to 30% coverage (max $50k) when selecting quotes
           </p>
         </motion.div>
 
@@ -255,8 +537,10 @@ export default function ComparePage() {
                 </motion.div>
               ))}
               {selectedProviders.length < 4 && (
-                <Card className="p-6 border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-purple-400 transition-colors"
-                  onClick={() => setShowAddProvider(!showAddProvider)}>
+                <Card 
+                  className="p-6 border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-purple-400 transition-colors"
+                  onClick={() => setShowAddProvider(!showAddProvider)}
+                >
                   <div className="text-center">
                     <Plus className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">Add Provider</p>
@@ -268,14 +552,23 @@ export default function ComparePage() {
             {/* Add Provider Modal */}
             {showAddProvider && (
               <Card className="p-4 mb-4 border-2 border-purple-200">
-                <h3 className="font-bold mb-3">Select a provider to add:</h3>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold">Select from 15 approved providers:</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddProvider(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
                   {availableProviders.map((provider) => (
                     <Button
                       key={provider.id}
                       variant="outline"
                       onClick={() => addProvider(provider)}
-                      className="hover:border-purple-400"
+                      className="hover:border-purple-400 text-xs"
                     >
                       {provider.name}
                     </Button>
@@ -284,7 +577,7 @@ export default function ComparePage() {
               </Card>
             )}
 
-            {/* Pricing */}
+            {/* Price Range */}
             <ComparisonRow
               label="Price Range"
               icon={DollarSign}
@@ -292,7 +585,7 @@ export default function ComparePage() {
               values={selectedProviders.map(p => p.priceRange)}
             />
 
-            {/* Duration */}
+            {/* Avg Duration */}
             <ComparisonRow
               label="Avg Duration"
               icon={Clock}
@@ -300,7 +593,7 @@ export default function ComparePage() {
               values={selectedProviders.map(p => p.avgDuration)}
             />
 
-            {/* Projects */}
+            {/* Projects Completed */}
             <ComparisonRow
               label="Projects Completed"
               icon={Award}
@@ -308,7 +601,7 @@ export default function ComparePage() {
               values={selectedProviders.map(p => `${p.projectsCompleted}+`)}
             />
 
-            {/* Turnaround */}
+            {/* Turnaround Time */}
             <ComparisonRow
               label="Turnaround Time"
               icon={Zap}
@@ -324,7 +617,7 @@ export default function ComparePage() {
               values={selectedProviders.map(p => p.teamSize)}
             />
 
-            {/* Section: Features */}
+            {/* Features Section */}
             <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
               <div className="flex items-center">
                 <h3 className="font-bold text-lg">Features</h3>
@@ -357,7 +650,7 @@ export default function ComparePage() {
               values={selectedProviders.map(p => p.features.emergencyResponse)}
             />
 
-            {/* Section: Strengths */}
+            {/* Key Strengths Section */}
             <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
               <div className="flex items-center">
                 <h3 className="font-bold text-lg">Key Strengths</h3>
@@ -381,33 +674,63 @@ export default function ComparePage() {
               ))}
             </div>
 
-            {/* CTA Row */}
+            {/* Contact CTA Row */}
             <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div></div>
+              <div className="flex items-center">
+                <h3 className="font-bold text-sm">Contact</h3>
+              </div>
               {selectedProviders.map((provider) => (
-                <Button
-                  key={provider.id}
-                  className="bg-gradient-to-r from-purple-600 to-green-600 hover:opacity-90"
-                >
-                  Contact {provider.name.split(' ')[0]}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <div key={provider.id} className="space-y-2">
+                  <Button
+                    onClick={() => handleContactProvider(provider)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-green-600 hover:opacity-90"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email {provider.name.split(' ')[0]}
+                  </Button>
+                  <Button
+                    onClick={() => handleVisitWebsite(provider.website)}
+                    variant="outline"
+                    className="w-full border-2 border-purple-600 text-purple-600 hover:bg-purple-50"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Visit Website
+                  </Button>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* Recommendation CTA */}
         <Card className="mt-12 p-8 bg-gradient-to-r from-purple-50 to-green-50 border-2">
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-3">Need Help Choosing?</h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Use our AI-powered recommendation engine to find the perfect audit provider for your project
+              Use our AI-powered recommendation engine to find the perfect audit provider for your Solana project
             </p>
-            <Button className="bg-gradient-to-r from-purple-600 to-green-600">
-              Get Personalized Recommendation
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <Link href="/calculator">
+              <Button className="bg-gradient-to-r from-purple-600 to-green-600 hover:opacity-90">
+                Get Personalized Recommendation
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </Card>
+
+        {/* Program Info */}
+        <Card className="mt-8 p-6 border-2 border-blue-200 bg-blue-50">
+          <div className="flex items-start gap-4">
+            <Shield className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+            <div>
+              <h4 className="font-bold text-blue-900 mb-2">About the Subsidy Program</h4>
+              <p className="text-sm text-blue-800 mb-2">
+                The Solana Audit Subsidy Program is a <span className="font-semibold">$1M initiative</span> by Superteam, MonkeDAO, Jito, and Areta Market to lower audit barriers for Solana projects.
+              </p>
+              <p className="text-sm text-blue-800">
+                Apply your Subsidy Voucher Code when selecting quotes for <span className="font-semibold">up to 30% coverage</span> (maximum $50,000 per project).
+              </p>
+            </div>
           </div>
         </Card>
       </div>
@@ -415,6 +738,7 @@ export default function ComparePage() {
   );
 }
 
+// Comparison Row Component
 function ComparisonRow({
   label,
   icon: Icon,
@@ -441,6 +765,7 @@ function ComparisonRow({
   );
 }
 
+// Feature Row Component
 function FeatureRow({ label, values }: { label: string; values: boolean[] }) {
   return (
     <div className="grid gap-4 mb-4" style={{ gridTemplateColumns: `200px repeat(${values.length}, 1fr)` }}>
@@ -457,5 +782,5 @@ function FeatureRow({ label, values }: { label: string; values: boolean[] }) {
         </Card>
       ))}
     </div>
-  );
+);
 }
