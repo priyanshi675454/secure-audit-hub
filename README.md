@@ -1,9 +1,17 @@
 
 > **Your complete guide to navigating the $1M Solana Audit Subsidy Program - Cohort V**
 
-🌐 **[Live Demo](https://your-project.vercel.app)** 
-Github link - () 
+🌐 **[Live Demo](https://secure-audit-hub.vercel.app/)** 
+Github link - (https://github.com/priyanshi675454/secure-audit-hub) 
 
+## 📞 Contact & Support/ build
+
+name- priyanshi Gajjar
+email -priyanshigajjar46@gmail.com
+mobile no-+91 8200272432
+twitter -@GajjarG78579
+
+check it go to my twitter account
 ---
 
 ## 📋 Table of Contents
@@ -232,7 +240,7 @@ Average Subsidy:       $20,000
 #### **Desktop/Laptop Access:**
 
 1. Open your web browser (Chrome, Firefox, Safari, Edge)
-2. Navigate to: **[https://your-project.vercel.app](https://your-project.vercel.app)**
+2. Navigate to: **[https://secure-audit-hub.vercel.app/]
 3. Start exploring features:
    - Click **"Get Started"** to begin application
    - Click **"Compare Providers"** to view all 15 auditors
@@ -280,8 +288,7 @@ git --version    # Should show any version
 #### **Installation Steps**
 ```bash
 # Step 1: Clone the repository
-git clone https://github.com/yourusername/secure-audit-hub.git
-
+git clone https://github.com/priyanshi675454/secure-audit-hub
 # Step 2: Navigate to project folder
 cd secure-audit-hub
 
@@ -538,7 +545,7 @@ Based on the official Solana Audit Subsidy Program requirements:
 
 **Option A: One-Click Deploy**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/secure-audit-hub)
+[![Deploy with Vercel](https://vercel.com/button)]
 
 1. Click the button above
 2. Sign in with GitHub
@@ -642,7 +649,7 @@ Contributions make this project better! Here's how you can help:
 # 1. Fork the repository on GitHub
 
 # 2. Clone your fork
-git clone https://github.com/YOUR-USERNAME/secure-audit-hub.git
+git clone https://github.com/priyanshi675454/secure-audit-hub
 
 # 3. Create a feature branch
 git checkout -b feature/amazing-feature
@@ -684,14 +691,7 @@ This is an application-based program with quality standards:
 
 ---
 
-## 📞 Contact & Support/ build
 
-name- priyanshi Gajjar
-email -priyanshigajjar46@gmail.com
-mobile no-+91 8200272432
-twitter -@GajjarG78579
-
-check it go to my twitter account
 
 
 
@@ -785,11 +785,7 @@ If this project helped you or your Solana project:
 🔐 **SecureAuditHub**  
 *Making security audits accessible for all Solana builders*
 
----
 
-**[Live Website](https://your-project.vercel.app)** • **[GitHub](https://github.com/yourusername/secure-audit-hub)** • **[Twitter](https://twitter.com/secureaudithub)** • **[Documentation](#features)**
-
----
 
 **© 2026 SecureAuditHub. All Rights Reserved.**
 
