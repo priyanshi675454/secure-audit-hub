@@ -136,7 +136,7 @@ export default function ResourcesPage() {
       color: "text-pink-600",
       downloadable: false,
       featured: true,
-      link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      link: "https://www.youtube.com/watch?v=fyn3nhKBNwM",
     },
     {
       id: 8,
