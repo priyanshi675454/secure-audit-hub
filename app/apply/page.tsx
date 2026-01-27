@@ -1,3 +1,6 @@
+// app/apply/page.tsx
+// UPDATED VERSION with immediate email sending
+
 "use client";
 
 import { useState } from "react";
@@ -18,12 +21,19 @@ import {
   DollarSign,
   Sparkles,
   AlertCircle,
+  Mail,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ApplyPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [applicationId, setApplicationId] = useState("");
+  const [submissionTime, setSubmissionTime] = useState<Date | null>(null);
+  
   const [formData, setFormData] = useState({
     projectName: "",
     projectType: "",
@@ -98,13 +108,220 @@ export default function ApplyPage() {
     }
   };
 
-  const handleSubmit = () => {
-    alert("✅ Application submitted successfully!\n\nYou will receive a confirmation email within 24 hours.\n\nThank you for applying!");
-    window.location.href = "/";
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/submit-application', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setApplicationId(result.data.applicationId);
+        setSubmissionTime(new Date());
+        setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        alert('❌ Failed to submit application. Please try again.\n\n' + result.message);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('❌ Error submitting application. Please check your internet connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
+  // SUCCESS PAGE - Show after submission
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen pt-24 pb-20 px-4 bg-gradient-to-b from-green-50 to-white">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center mb-8"
+          >
+            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-green-600 to-purple-600 bg-clip-text text-transparent">
+                Congratulations!
+              </span>
+            </h1>
+            <p className="text-xl text-gray-600">
+              Your application has been submitted successfully
+            </p>
+          </motion.div>
+
+          {/* Email Confirmation Notice */}
+          <Card className="p-8 mb-6 border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <Mail className="w-8 h-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  Email Sent Immediately!
+                </h3>
+                <p className="text-gray-700 text-lg mb-3">
+                  A detailed confirmation email has been sent to{" "}
+                  <span className="font-semibold text-blue-600">{formData.teamEmail}</span>
+                </p>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="w-4 h-4" />
+                  <span>Sent at {submissionTime?.toLocaleTimeString()}</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Application Summary */}
+          <Card className="p-8 border-2 mb-6">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-purple-600" />
+              Application Summary
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Project Info */}
+              <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                <h3 className="font-bold text-lg mb-4 text-purple-700">
+                  📁 Project Information
+                </h3>
+                <div className="space-y-3">
+                  <SummaryItem label="Project Name" value={formData.projectName} />
+                  <SummaryItem label="Type" value={formData.projectType} />
+                  <SummaryItem label="Team Lead" value={formData.teamLead} />
+                </div>
+              </Card>
+
+              {/* Budget */}
+              <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <h3 className="font-bold text-lg mb-4 text-green-700">
+                  💰 Budget Information
+                </h3>
+                <div className="space-y-3">
+                  <SummaryItem 
+                    label="Requested Subsidy" 
+                    value={`$${parseInt(formData.requestedSubsidy || "0").toLocaleString()}`}
+                    highlight
+                  />
+                  <SummaryItem 
+                    label="Total Budget" 
+                    value={`$${parseInt(formData.auditBudget || "0").toLocaleString()}`}
+                  />
+                  <SummaryItem label="Timeline" value={formData.preferredTimeline} />
+                </div>
+              </Card>
+
+              {/* Application ID */}
+              <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                <h3 className="font-bold text-lg mb-4 text-blue-700">
+                  📋 Reference Number
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Application ID</p>
+                    <p className="text-lg font-mono font-bold text-blue-600">
+                      {applicationId}
+                    </p>
+                  </div>
+                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>
+                    Under Review
+                  </Badge>
+                </div>
+              </Card>
+
+              {/* Contact */}
+              <Card className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
+                <h3 className="font-bold text-lg mb-4 text-orange-700">
+                  📧 Contact Information
+                </h3>
+                <div className="space-y-3">
+                  <SummaryItem label="Email" value={formData.teamEmail} />
+                  <SummaryItem label="Team Size" value={formData.teamSize} />
+                  <SummaryItem 
+                    label="Launch Date" 
+                    value={new Date(formData.mainnetDate).toLocaleDateString()}
+                  />
+                </div>
+              </Card>
+            </div>
+          </Card>
+
+          {/* Next Steps */}
+          <Card className="p-8 border-2 mb-6 bg-gradient-to-r from-purple-50 to-green-50">
+            <h3 className="text-xl font-bold mb-4">📅 What Happens Next?</h3>
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                  1
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Immediate Confirmation</p>
+                  <p className="text-gray-600 text-sm">
+                    You've received a detailed email at {formData.teamEmail}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                  2
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Expert Review</p>
+                  <p className="text-gray-600 text-sm">
+                    Our panel will evaluate your application (1-2 weeks)
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                  3
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Decision Notification</p>
+                  <p className="text-gray-600 text-sm">
+                    We'll notify you via email with the final decision
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button
+              onClick={() => window.print()}
+              className="flex-1 bg-gradient-to-r from-purple-600 to-green-600 h-14 text-lg"
+            >
+              Print Application Summary
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => window.location.href = "/"}
+              className="flex-1 h-14 text-lg"
+            >
+              Return to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ORIGINAL APPLICATION FORM (keep everything the same, just update handleSubmit button)
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 bg-gradient-to-b from-purple-50 to-white">
       <div className="max-w-5xl mx-auto">
@@ -359,6 +576,9 @@ export default function ApplyPage() {
                   placeholder="contact@yourproject.com"
                   className={`mt-2 h-12 ${errors.includes("teamEmail") ? "border-red-500" : ""}`}
                 />
+                <p className="text-sm text-gray-500 mt-1">
+                  ✉️ Confirmation will be sent to this email immediately
+                </p>
                 {errors.includes("teamEmail") && (
                   <p className="text-red-500 text-sm mt-1">Contact email is required</p>
                 )}
@@ -627,13 +847,13 @@ export default function ApplyPage() {
 
               <Card className="p-6 bg-gradient-to-r from-purple-50 to-green-50 border-2 border-purple-200">
                 <div className="flex gap-4">
-                  <Sparkles className="w-8 h-8 text-purple-600 flex-shrink-0" />
+                  <Mail className="w-8 h-8 text-purple-600 flex-shrink-0" />
                   <div>
                     <h3 className="font-bold text-lg mb-2">Ready to Submit?</h3>
                     <p className="text-sm text-gray-700 mb-4">
                       By submitting this application, you confirm that all information provided is
-                      accurate and complete. The expert panel will review your application within
-                      1-2 weeks.
+                      accurate and complete. <strong>You will receive an immediate confirmation email</strong> at {formData.teamEmail}, 
+                      and the expert panel will review your application within 1-2 weeks.
                     </p>
                     <div className="flex gap-2 text-sm text-gray-600">
                       <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
@@ -668,10 +888,20 @@ export default function ApplyPage() {
           ) : (
             <Button
               onClick={handleSubmit}
-              className="bg-gradient-to-r from-green-600 to-purple-600 h-12 px-8"
+              disabled={isSubmitting}
+              className="bg-gradient-to-r from-green-600 to-purple-600 h-12 px-8 disabled:opacity-50"
             >
-              Submit Application
-              <CheckCircle2 className="w-5 h-5 ml-2" />
+              {isSubmitting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  Submit Application
+                  <CheckCircle2 className="w-5 h-5 ml-2" />
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -694,6 +924,17 @@ function ReviewItem({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between items-center py-2 border-b last:border-0">
       <span className="text-gray-600">{label}</span>
       <span className="font-medium">{value || "Not provided"}</span>
+    </div>
+  );
+}
+
+function SummaryItem({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-600 mb-1">{label}</p>
+      <p className={`font-semibold ${highlight ? "text-2xl text-green-600" : "text-gray-800"}`}>
+        {value || "Not provided"}
+      </p>
     </div>
   );
 }
