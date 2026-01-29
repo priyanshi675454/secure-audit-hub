@@ -1,10 +1,14 @@
+// app/compare/page.tsx
+// UNIQUE FEATURE: Interactive Audit Provider Comparison Tool
+
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import {
   CheckCircle2,
   XCircle,
@@ -12,775 +16,441 @@ import {
   DollarSign,
   Clock,
   Shield,
-  Award,
-  Users,
-  Zap,
-  ArrowRight,
-  Plus,
-  X,
-  ExternalLink,
-  Mail,
+  TrendingUp,
+  Filter,
+  Search,
 } from "lucide-react";
-import { motion } from "framer-motion";
 
-interface Provider {
-  id: number;
+interface AuditProvider {
   name: string;
-  logo: string;
   rating: number;
-  reviews: number;
-  priceRange: string;
-  avgDuration: string;
-  projectsCompleted: number;
-  specialties: string[];
-  features: {
-    formalVerification: boolean;
-    bugBounty: boolean;
-    insurance: boolean;
-    continuousMonitoring: boolean;
-    postAuditSupport: boolean;
-    emergencyResponse: boolean;
-  };
-  strengths: string[];
-  turnaroundTime: string;
-  teamSize: string;
+  specialization: string[];
+  basePrice: number;
+  timeline: string;
+  linesOfCode: number;
+  certifications: string[];
+  pastProjects: number;
+  features: string[];
   website: string;
-  contactEmail: string;
 }
 
 export default function ComparePage() {
-  // ALL 15 OFFICIAL PROVIDERS from Solana Audit Subsidy Program
-  const allProviders: Provider[] = [
+  const [selectedProviders, setSelectedProviders] = useState<string[]>([]);
+  const [projectSize, setProjectSize] = useState(5000);
+  const [subsidyAmount, setSubsidyAmount] = useState(25000);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterSpecialization, setFilterSpecialization] = useState("All");
+
+  const providers: AuditProvider[] = [
     {
-      id: 1,
-      name: "Adevar Labs Inc.",
-      logo: "AL",
-      rating: 4.9,
-      reviews: 45,
-      priceRange: "$15k - $50k",
-      avgDuration: "3-4 weeks",
-      projectsCompleted: 120,
-      specialties: ["DeFi", "Smart Contracts", "Web3"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Fast turnaround", "Solana expertise", "Detailed reports"],
-      turnaroundTime: "2-3 weeks",
-      teamSize: "15-20 auditors",
-      website: "https://www.adevarlabs.com",
-      contactEmail: "contact@adevarlabs.com",
-    },
-    {
-      id: 2,
-      name: "Certora",
-      logo: "CE",
-      rating: 4.8,
-      reviews: 38,
-      priceRange: "$20k - $60k",
-      avgDuration: "4-6 weeks",
-      projectsCompleted: 95,
-      specialties: ["Formal Verification", "DeFi", "Smart Contracts"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: false,
-      },
-      strengths: ["Mathematical proofs", "Formal verification", "Academic backing"],
-      turnaroundTime: "4-5 weeks",
-      teamSize: "20-25 auditors",
-      website: "https://www.certora.com",
-      contactEmail: "info@certora.com",
-    },
-    {
-      id: 3,
-      name: "ChainSecurity",
-      logo: "CS",
-      rating: 4.7,
-      reviews: 42,
-      priceRange: "$18k - $55k",
-      avgDuration: "3-5 weeks",
-      projectsCompleted: 110,
-      specialties: ["Smart Contracts", "NFT", "Gaming"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["NFT expertise", "Gaming focus", "Comprehensive audits"],
-      turnaroundTime: "3-5 weeks",
-      teamSize: "18-22 auditors",
-      website: "https://chainsecurity.com",
-      contactEmail: "info@chainsecurity.com",
-    },
-    {
-      id: 4,
-      name: "Cyfrin",
-      logo: "CY",
-      rating: 4.9,
-      reviews: 52,
-      priceRange: "$12k - $45k",
-      avgDuration: "2-4 weeks",
-      projectsCompleted: 140,
-      specialties: ["DeFi", "Infrastructure", "Protocols"],
-      features: {
-        formalVerification: false,
-        bugBounty: true,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Competitive pricing", "Fast delivery", "Great support"],
-      turnaroundTime: "2-3 weeks",
-      teamSize: "25-30 auditors",
-      website: "https://www.cyfrin.io",
-      contactEmail: "contact@cyfrin.io",
-    },
-    {
-      id: 5,
-      name: "Guardian",
-      logo: "GU",
-      rating: 4.6,
-      reviews: 35,
-      priceRange: "$16k - $50k",
-      avgDuration: "3-4 weeks",
-      projectsCompleted: 88,
-      specialties: ["Web3", "Smart Contracts", "DeFi"],
-      features: {
-        formalVerification: false,
-        bugBounty: false,
-        insurance: true,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Flexible engagement", "Insurance option", "Solana focus"],
-      turnaroundTime: "3-4 weeks",
-      teamSize: "12-18 auditors",
-      website: "https://guardianaudits.com",
-      contactEmail: "contact@guardianaudits.com",
-    },
-    {
-      id: 6,
-      name: "Hacken",
-      logo: "HA",
-      rating: 4.7,
-      reviews: 48,
-      priceRange: "$14k - $48k",
-      avgDuration: "3-5 weeks",
-      projectsCompleted: 125,
-      specialties: ["DeFi", "NFT", "Exchange"],
-      features: {
-        formalVerification: false,
-        bugBounty: true,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Blockchain security", "Global team", "Fast response"],
-      turnaroundTime: "3-5 weeks",
-      teamSize: "30+ auditors",
-      website: "https://hacken.io",
-      contactEmail: "sales@hacken.io",
-    },
-    {
-      id: 7,
-      name: "Hexens",
-      logo: "HE",
-      rating: 4.8,
-      reviews: 40,
-      priceRange: "$17k - $52k",
-      avgDuration: "3-4 weeks",
-      projectsCompleted: 102,
-      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Boutique firm", "High complexity", "Detailed analysis"],
-      turnaroundTime: "3-4 weeks",
-      teamSize: "10-15 auditors",
-      website: "https://hexens.io",
-      contactEmail: "contact@hexens.io",
-    },
-    {
-      id: 8,
-      name: "Immunefi",
-      logo: "IM",
-      rating: 4.9,
-      reviews: 55,
-      priceRange: "$10k - $40k",
-      avgDuration: "2-3 weeks",
-      projectsCompleted: 160,
-      specialties: ["Bug Bounty", "DeFi", "Security"],
-      features: {
-        formalVerification: false,
-        bugBounty: true,
-        insurance: true,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Bug bounty platform", "Continuous security", "Insurance"],
-      turnaroundTime: "2-3 weeks",
-      teamSize: "50+ auditors",
-      website: "https://immunefi.com",
-      contactEmail: "contact@immunefi.com",
-    },
-    {
-      id: 9,
-      name: "Oak Security",
-      logo: "OA",
-      rating: 4.8,
-      reviews: 44,
-      priceRange: "$15k - $50k",
-      avgDuration: "3-4 weeks",
-      projectsCompleted: 115,
-      specialties: ["Smart Contracts", "DeFi", "NFT"],
-      features: {
-        formalVerification: false,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Solana native", "Deep ecosystem knowledge", "NFT expertise"],
-      turnaroundTime: "3-4 weeks",
-      teamSize: "15-20 auditors",
-      website: "https://www.oaksecurity.io",
-      contactEmail: "hello@oaksecurity.io",
-    },
-    {
-      id: 10,
-      name: "Quantstamp",
-      logo: "QU",
-      rating: 4.7,
-      reviews: 50,
-      priceRange: "$18k - $60k",
-      avgDuration: "4-6 weeks",
-      projectsCompleted: 130,
-      specialties: ["DeFi", "Smart Contracts", "Protocols"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Industry veteran", "Major protocols", "Comprehensive"],
-      turnaroundTime: "4-6 weeks",
-      teamSize: "25-30 auditors",
-      website: "https://quantstamp.com",
-      contactEmail: "info@quantstamp.com",
-    },
-    {
-      id: 11,
-      name: "QuillAudits",
-      logo: "QA",
-      rating: 4.6,
-      reviews: 36,
-      priceRange: "$12k - $42k",
-      avgDuration: "2-4 weeks",
-      projectsCompleted: 92,
-      specialties: ["Smart Contracts", "DeFi", "Web3"],
-      features: {
-        formalVerification: false,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: false,
-      },
-      strengths: ["Cost-effective", "Quick turnaround", "Growing projects"],
-      turnaroundTime: "2-4 weeks",
-      teamSize: "15-20 auditors",
-      website: "https://www.quillaudits.com",
-      contactEmail: "audits@quillhash.com",
-    },
-    {
-      id: 12,
-      name: "Runtime Verification",
-      logo: "RV",
-      rating: 4.9,
-      reviews: 41,
-      priceRange: "$22k - $65k",
-      avgDuration: "5-7 weeks",
-      projectsCompleted: 78,
-      specialties: ["Formal Verification", "Protocols", "Infrastructure"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Academic-grade", "Formal methods", "Highest standards"],
-      turnaroundTime: "5-7 weeks",
-      teamSize: "12-18 auditors",
-      website: "https://runtimeverification.com",
-      contactEmail: "contact@runtimeverification.com",
-    },
-    {
-      id: 13,
-      name: "Sherlock",
-      logo: "SH",
-      rating: 4.8,
-      reviews: 46,
-      priceRange: "$16k - $54k",
-      avgDuration: "3-5 weeks",
-      projectsCompleted: 108,
-      specialties: ["DeFi", "Insurance", "Security"],
-      features: {
-        formalVerification: false,
-        bugBounty: true,
-        insurance: true,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Audit + insurance", "Comprehensive coverage", "Solana focus"],
-      turnaroundTime: "3-5 weeks",
-      teamSize: "20-25 auditors",
-      website: "https://www.sherlock.xyz",
-      contactEmail: "info@sherlock.xyz",
-    },
-    {
-      id: 14,
-      name: "Statemind",
-      logo: "ST",
-      rating: 4.7,
-      reviews: 39,
-      priceRange: "$15k - $48k",
-      avgDuration: "3-4 weeks",
-      projectsCompleted: 97,
-      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Security-first", "Comprehensive testing", "Detailed reports"],
-      turnaroundTime: "3-4 weeks",
-      teamSize: "15-20 auditors",
-      website: "https://statemind.io",
-      contactEmail: "hello@statemind.io",
-    },
-    {
-      id: 15,
       name: "Zellic",
-      logo: "ZE",
       rating: 4.9,
-      reviews: 58,
-      priceRange: "$20k - $65k",
-      avgDuration: "4-6 weeks",
-      projectsCompleted: 145,
-      specialties: ["Smart Contracts", "DeFi", "Infrastructure"],
-      features: {
-        formalVerification: true,
-        bugBounty: false,
-        insurance: false,
-        continuousMonitoring: true,
-        postAuditSupport: true,
-        emergencyResponse: true,
-      },
-      strengths: ["Top-tier auditor", "Major protocols", "Premium service"],
-      turnaroundTime: "4-6 weeks",
-      teamSize: "30+ auditors",
-      website: "https://www.zellic.io",
-      contactEmail: "inquiries@zellic.io",
+      specialization: ["DeFi", "Smart Contracts", "Infrastructure"],
+      basePrice: 80000,
+      timeline: "4-6 weeks",
+      linesOfCode: 10000,
+      certifications: ["SOC 2", "ISO 27001"],
+      pastProjects: 150,
+      features: ["Real-time monitoring", "Continuous audits", "24/7 support"],
+      website: "https://zellic.io",
+    },
+    {
+      name: "OtterSec",
+      rating: 4.8,
+      specialization: ["Solana", "Rust", "Move"],
+      basePrice: 75000,
+      timeline: "3-5 weeks",
+      linesOfCode: 8000,
+      certifications: ["SOC 2"],
+      pastProjects: 120,
+      features: ["Solana expertise", "Fast turnaround", "Remediation support"],
+      website: "https://osec.io",
+    },
+    {
+      name: "Certora",
+      rating: 4.7,
+      specialization: ["Formal Verification", "DeFi", "Smart Contracts"],
+      basePrice: 90000,
+      timeline: "5-8 weeks",
+      linesOfCode: 15000,
+      certifications: ["SOC 2", "ISO 27001", "FedRAMP"],
+      pastProjects: 200,
+      features: ["Formal verification", "Mathematical proofs", "Deep analysis"],
+      website: "https://certora.com",
+    },
+    {
+      name: "Hacken",
+      rating: 4.6,
+      specialization: ["DeFi", "NFT", "Gaming"],
+      basePrice: 60000,
+      timeline: "3-4 weeks",
+      linesOfCode: 7000,
+      certifications: ["ISO 27001"],
+      pastProjects: 180,
+      features: ["Fast delivery", "Competitive pricing", "Bug bounty"],
+      website: "https://hacken.io",
+    },
+    {
+      name: "Oak Security",
+      rating: 4.8,
+      specialization: ["Solana", "CosmWasm", "Infrastructure"],
+      basePrice: 70000,
+      timeline: "4-5 weeks",
+      linesOfCode: 9000,
+      certifications: ["SOC 2"],
+      pastProjects: 90,
+      features: ["Solana native", "Expert team", "Comprehensive reports"],
+      website: "https://oaksecurity.io",
+    },
+    {
+      name: "Quantstamp",
+      rating: 4.7,
+      specialization: ["DeFi", "Layer 1", "Smart Contracts"],
+      basePrice: 85000,
+      timeline: "5-7 weeks",
+      linesOfCode: 12000,
+      certifications: ["SOC 2", "ISO 27001"],
+      pastProjects: 250,
+      features: ["Established reputation", "Deep expertise", "Insurance options"],
+      website: "https://quantstamp.com",
+    },
+    {
+      name: "ChainSecurity",
+      rating: 4.8,
+      specialization: ["DeFi", "Smart Contracts", "Bridges"],
+      basePrice: 95000,
+      timeline: "6-8 weeks",
+      linesOfCode: 15000,
+      certifications: ["SOC 2", "ISO 27001"],
+      pastProjects: 160,
+      features: ["Academic rigor", "Detailed reports", "Top-tier quality"],
+      website: "https://chainsecurity.com",
+    },
+    {
+      name: "Cyfrin",
+      rating: 4.6,
+      specialization: ["Education", "Smart Contracts", "DeFi"],
+      basePrice: 55000,
+      timeline: "3-4 weeks",
+      linesOfCode: 6000,
+      certifications: ["SOC 2"],
+      pastProjects: 75,
+      features: ["Educational approach", "Competitive pricing", "Quick turnaround"],
+      website: "https://cyfrin.io",
     },
   ];
 
-  const [selectedProviders, setSelectedProviders] = useState<Provider[]>([
-    allProviders[0], // Adevar Labs
-    allProviders[3], // Cyfrin
-    allProviders[7], // Immunefi
-  ]);
+  const calculatePrice = (basePrice: number, projectSize: number) => {
+    const factor = projectSize / 5000;
+    return Math.round(basePrice * factor);
+  };
 
-  const [showAddProvider, setShowAddProvider] = useState(false);
+  const calculateSubsidy = (price: number) => {
+    const subsidyPercent = 0.3;
+    const maxSubsidy = 50000;
+    return Math.min(price * subsidyPercent, maxSubsidy, subsidyAmount);
+  };
 
-  const addProvider = (provider: Provider) => {
-    if (selectedProviders.length < 4 && !selectedProviders.find(p => p.id === provider.id)) {
-      setSelectedProviders([...selectedProviders, provider]);
-      setShowAddProvider(false);
+  const filteredProviders = providers.filter((provider) => {
+    const matchesSearch = provider.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSpecialization =
+      filterSpecialization === "All" ||
+      provider.specialization.includes(filterSpecialization);
+    return matchesSearch && matchesSpecialization;
+  });
+
+  const toggleProvider = (name: string) => {
+    if (selectedProviders.includes(name)) {
+      setSelectedProviders(selectedProviders.filter((p) => p !== name));
+    } else if (selectedProviders.length < 3) {
+      setSelectedProviders([...selectedProviders, name]);
     }
-  };
-
-  const removeProvider = (id: number) => {
-    if (selectedProviders.length > 2) {
-      setSelectedProviders(selectedProviders.filter(p => p.id !== id));
-    }
-  };
-
-  const availableProviders = allProviders.filter(
-    p => !selectedProviders.find(sp => sp.id === p.id)
-  );
-
-  // Contact provider via email
-  const handleContactProvider = (provider: Provider) => {
-    const subject = encodeURIComponent(`Solana Audit Inquiry - Subsidy Program Cohort V`);
-    const body = encodeURIComponent(
-      `Hi ${provider.name} team,\n\n` +
-      `I'm applying for the Solana Audit Subsidy Program (Cohort V) and interested in your audit services.\n\n` +
-      `Project Details:\n` +
-      `- Project Name: [Your Project]\n` +
-      `- Project Type: [DeFi/NFT/Gaming/etc.]\n` +
-      `- GitHub Repository: [Your Repo URL]\n` +
-      `- Expected Launch: [Date]\n` +
-      `- Lines of Code: [Approx.]\n\n` +
-      `I have been approved for the subsidy program and can apply up to 30% coverage (max $50k) via Subsidy Voucher Code.\n\n` +
-      `Could you please provide:\n` +
-      `1. Quote for audit services\n` +
-      `2. Estimated timeline\n` +
-      `3. Availability for Q1/Q2 2026\n\n` +
-      `Thank you!\n\n` +
-      `Best regards`
-    );
-    
-    window.location.href = `mailto:${provider.contactEmail}?subject=${subject}&body=${body}`;
-  };
-
-  // Visit provider website
-  const handleVisitWebsite = (website: string) => {
-    window.open(website, '_blank', 'noopener,noreferrer');
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="min-h-screen pt-24 pb-20 px-4 bg-gradient-to-b from-purple-50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <Badge className="mb-4 bg-blue-100 text-blue-700 border-blue-200">
-            <Shield className="w-4 h-4 mr-2" />
-            15 Approved Providers - Cohort V
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200 text-lg px-6 py-2">
+            <Filter className="w-5 h-5 mr-2" />
+            Smart Comparison Tool
           </Badge>
           <h1 className="text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-600 to-green-600 bg-clip-text text-transparent">
               Compare Audit Providers
             </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-4">
-            All 15 officially approved providers for the Solana Audit Subsidy Program. Compare features, pricing, and expertise side-by-side.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Find the perfect audit provider for your project. Compare pricing, timelines, and
+            expertise.
           </p>
-          <p className="text-sm text-gray-500">
-            Apply subsidy voucher code for up to 30% coverage (max $50k) when selecting quotes
-          </p>
-        </motion.div>
+        </div>
 
-        {/* Comparison Table */}
-        <div className="overflow-x-auto">
-          <div className="min-w-max">
-            {/* Header Row */}
-            <div className="grid gap-4 mb-4" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div className="h-48"></div>
-              {selectedProviders.map((provider, index) => (
-                <motion.div
-                  key={provider.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="p-6 border-2 border-purple-200 relative">
-                    {selectedProviders.length > 2 && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-2 right-2 h-6 w-6"
-                        onClick={() => removeProvider(provider.id)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-green-500 rounded-xl flex items-center justify-center text-white font-bold text-2xl mx-auto mb-3">
-                      {provider.logo}
-                    </div>
-                    <h3 className="text-lg font-bold text-center mb-2">{provider.name}</h3>
-                    <div className="flex items-center justify-center gap-1 mb-3">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="font-semibold">{provider.rating}</span>
-                      <span className="text-gray-500 text-sm">({provider.reviews})</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {provider.specialties.slice(0, 2).map((spec) => (
-                        <Badge key={spec} variant="outline" className="text-xs">
-                          {spec}
-                        </Badge>
-                      ))}
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-              {selectedProviders.length < 4 && (
-                <Card 
-                  className="p-6 border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-purple-400 transition-colors"
-                  onClick={() => setShowAddProvider(!showAddProvider)}
-                >
-                  <div className="text-center">
-                    <Plus className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Add Provider</p>
-                  </div>
-                </Card>
-              )}
+        {/* Calculator Section */}
+        <Card className="p-8 mb-8 border-2 bg-gradient-to-r from-purple-50 to-green-50">
+          <h2 className="text-2xl font-bold mb-6">📊 Project Calculator</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label className="block font-semibold mb-3">
+                Your Project Size (Lines of Code)
+              </label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[projectSize]}
+                  onValueChange={(value) => setProjectSize(value[0])}
+                  min={1000}
+                  max={50000}
+                  step={1000}
+                  className="flex-1"
+                />
+                <Badge className="bg-purple-600 text-white px-4 py-2 text-lg min-w-[120px]">
+                  {projectSize.toLocaleString()}
+                </Badge>
+              </div>
             </div>
+            <div>
+              <label className="block font-semibold mb-3">
+                Your Approved Subsidy Amount
+              </label>
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[subsidyAmount]}
+                  onValueChange={(value) => setSubsidyAmount(value[0])}
+                  min={5000}
+                  max={50000}
+                  step={5000}
+                  className="flex-1"
+                />
+                <Badge className="bg-green-600 text-white px-4 py-2 text-lg min-w-[120px]">
+                  ${subsidyAmount.toLocaleString()}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </Card>
 
-            {/* Add Provider Modal */}
-            {showAddProvider && (
-              <Card className="p-4 mb-4 border-2 border-purple-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold">Select from 15 approved providers:</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowAddProvider(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-                  {availableProviders.map((provider) => (
-                    <Button
-                      key={provider.id}
-                      variant="outline"
-                      onClick={() => addProvider(provider)}
-                      className="hover:border-purple-400 text-xs"
+        {/* Filters */}
+        <Card className="p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold mb-2">Search Provider</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 text-gray-400" />
+                <Input
+                  placeholder="Search by name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block font-semibold mb-2">Filter by Specialization</label>
+              <select
+                value={filterSpecialization}
+                onChange={(e) => setFilterSpecialization(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg"
+              >
+                <option>All</option>
+                <option>DeFi</option>
+                <option>Solana</option>
+                <option>Smart Contracts</option>
+                <option>NFT</option>
+                <option>Gaming</option>
+                <option>Infrastructure</option>
+              </select>
+            </div>
+          </div>
+          {selectedProviders.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-2">
+                Selected for comparison ({selectedProviders.length}/3):
+              </p>
+              <div className="flex gap-2">
+                {selectedProviders.map((name) => (
+                  <Badge key={name} className="bg-purple-600 text-white px-3 py-1">
+                    {name}
+                    <button
+                      onClick={() => toggleProvider(name)}
+                      className="ml-2 hover:text-red-300"
                     >
-                      {provider.name}
-                    </Button>
-                  ))}
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </Card>
+
+        {/* Provider Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {filteredProviders.map((provider) => {
+            const estimatedPrice = calculatePrice(provider.basePrice, projectSize);
+            const subsidy = calculateSubsidy(estimatedPrice);
+            const finalPrice = estimatedPrice - subsidy;
+            const isSelected = selectedProviders.includes(provider.name);
+
+            return (
+              <Card
+                key={provider.name}
+                className={`p-6 hover:shadow-xl transition-all cursor-pointer ${
+                  isSelected ? "border-4 border-purple-600" : "border-2"
+                }`}
+                onClick={() => toggleProvider(provider.name)}
+              >
+                {/* Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold">{provider.name}</h3>
+                    <div className="flex items-center gap-1 mt-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold">{provider.rating}</span>
+                      <span className="text-sm text-gray-500">
+                        ({provider.pastProjects} projects)
+                      </span>
+                    </div>
+                  </div>
+                  <Badge className="bg-green-100 text-green-700">
+                    {provider.timeline}
+                  </Badge>
                 </div>
-              </Card>
-            )}
 
-            {/* Price Range */}
-            <ComparisonRow
-              label="Price Range"
-              icon={DollarSign}
-              iconColor="text-green-500"
-              values={selectedProviders.map(p => p.priceRange)}
-            />
+                {/* Specializations */}
+                <div className="mb-4">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Specializations</p>
+                  <div className="flex flex-wrap gap-1">
+                    {provider.specialization.map((spec) => (
+                      <Badge key={spec} variant="outline" className="text-xs">
+                        {spec}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Avg Duration */}
-            <ComparisonRow
-              label="Avg Duration"
-              icon={Clock}
-              iconColor="text-blue-500"
-              values={selectedProviders.map(p => p.avgDuration)}
-            />
+                {/* Pricing */}
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm text-gray-600">Estimated Cost</span>
+                    <span className="font-semibold">${estimatedPrice.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm text-gray-600">Subsidy (30%)</span>
+                    <span className="font-semibold text-green-600">
+                      -${subsidy.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="border-t pt-2 flex justify-between">
+                    <span className="font-bold">Your Cost</span>
+                    <span className="font-bold text-2xl text-purple-600">
+                      ${finalPrice.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
 
-            {/* Projects Completed */}
-            <ComparisonRow
-              label="Projects Completed"
-              icon={Award}
-              iconColor="text-purple-500"
-              values={selectedProviders.map(p => `${p.projectsCompleted}+`)}
-            />
-
-            {/* Turnaround Time */}
-            <ComparisonRow
-              label="Turnaround Time"
-              icon={Zap}
-              iconColor="text-yellow-500"
-              values={selectedProviders.map(p => p.turnaroundTime)}
-            />
-
-            {/* Team Size */}
-            <ComparisonRow
-              label="Team Size"
-              icon={Users}
-              iconColor="text-pink-500"
-              values={selectedProviders.map(p => p.teamSize)}
-            />
-
-            {/* Features Section */}
-            <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div className="flex items-center">
-                <h3 className="font-bold text-lg">Features</h3>
-              </div>
-              {selectedProviders.map(() => <div key={Math.random()}></div>)}
-            </div>
-
-            <FeatureRow
-              label="Formal Verification"
-              values={selectedProviders.map(p => p.features.formalVerification)}
-            />
-            <FeatureRow
-              label="Bug Bounty Platform"
-              values={selectedProviders.map(p => p.features.bugBounty)}
-            />
-            <FeatureRow
-              label="Audit Insurance"
-              values={selectedProviders.map(p => p.features.insurance)}
-            />
-            <FeatureRow
-              label="Continuous Monitoring"
-              values={selectedProviders.map(p => p.features.continuousMonitoring)}
-            />
-            <FeatureRow
-              label="Post-Audit Support"
-              values={selectedProviders.map(p => p.features.postAuditSupport)}
-            />
-            <FeatureRow
-              label="Emergency Response"
-              values={selectedProviders.map(p => p.features.emergencyResponse)}
-            />
-
-            {/* Key Strengths Section */}
-            <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div className="flex items-center">
-                <h3 className="font-bold text-lg">Key Strengths</h3>
-              </div>
-              {selectedProviders.map(() => <div key={Math.random()}></div>)}
-            </div>
-
-            <div className="grid gap-4" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div className="py-4"></div>
-              {selectedProviders.map((provider) => (
-                <Card key={provider.id} className="p-4">
-                  <ul className="space-y-2">
-                    {provider.strengths.map((strength) => (
-                      <li key={strength} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{strength}</span>
+                {/* Features */}
+                <div className="mb-4">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Key Features</p>
+                  <ul className="space-y-1">
+                    {provider.features.slice(0, 3).map((feature) => (
+                      <li key={feature} className="text-sm flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
-                </Card>
-              ))}
-            </div>
-
-            {/* Contact CTA Row */}
-            <div className="grid gap-4 mt-8" style={{ gridTemplateColumns: `200px repeat(${selectedProviders.length}, 1fr)` }}>
-              <div className="flex items-center">
-                <h3 className="font-bold text-sm">Contact</h3>
-              </div>
-              {selectedProviders.map((provider) => (
-                <div key={provider.id} className="space-y-2">
-                  <Button
-                    onClick={() => handleContactProvider(provider)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-green-600 hover:opacity-90"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email {provider.name.split(' ')[0]}
-                  </Button>
-                  <Button
-                    onClick={() => handleVisitWebsite(provider.website)}
-                    variant="outline"
-                    className="w-full border-2 border-purple-600 text-purple-600 hover:bg-purple-50"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Visit Website
-                  </Button>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                {/* CTA */}
+                <Button
+                  className={`w-full ${
+                    isSelected
+                      ? "bg-purple-600"
+                      : "bg-gradient-to-r from-purple-600 to-green-600"
+                  }`}
+                >
+                  {isSelected ? "✓ Selected" : "Compare"}
+                </Button>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Recommendation CTA */}
-        <Card className="mt-12 p-8 bg-gradient-to-r from-purple-50 to-green-50 border-2">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-3">Need Help Choosing?</h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Use our AI-powered recommendation engine to find the perfect audit provider for your Solana project
-            </p>
-            <Link href="/calculator">
-              <Button className="bg-gradient-to-r from-purple-600 to-green-600 hover:opacity-90">
-                Get Personalized Recommendation
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </Card>
-
-        {/* Program Info */}
-        <Card className="mt-8 p-6 border-2 border-blue-200 bg-blue-50">
-          <div className="flex items-start gap-4">
-            <Shield className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
-            <div>
-              <h4 className="font-bold text-blue-900 mb-2">About the Subsidy Program</h4>
-              <p className="text-sm text-blue-800 mb-2">
-                The Solana Audit Subsidy Program is a <span className="font-semibold">$1M initiative</span> by Superteam, MonkeDAO, Jito, and Areta Market to lower audit barriers for Solana projects.
-              </p>
-              <p className="text-sm text-blue-800">
-                Apply your Subsidy Voucher Code when selecting quotes for <span className="font-semibold">up to 30% coverage</span> (maximum $50,000 per project).
-              </p>
+        {/* Comparison Table */}
+        {selectedProviders.length > 1 && (
+          <Card className="p-8 border-2">
+            <h2 className="text-2xl font-bold mb-6">Side-by-Side Comparison</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b-2">
+                    <th className="text-left p-3 font-semibold">Feature</th>
+                    {selectedProviders.map((name) => (
+                      <th key={name} className="p-3 font-semibold text-center">
+                        {name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-3 font-medium">Rating</td>
+                    {selectedProviders.map((name) => {
+                      const provider = providers.find((p) => p.name === name)!;
+                      return (
+                        <td key={name} className="p-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            {provider.rating}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 font-medium">Timeline</td>
+                    {selectedProviders.map((name) => {
+                      const provider = providers.find((p) => p.name === name)!;
+                      return (
+                        <td key={name} className="p-3 text-center">
+                          {provider.timeline}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  <tr className="border-b bg-green-50">
+                    <td className="p-3 font-medium">Your Final Cost</td>
+                    {selectedProviders.map((name) => {
+                      const provider = providers.find((p) => p.name === name)!;
+                      const price = calculatePrice(provider.basePrice, projectSize);
+                      const subsidy = calculateSubsidy(price);
+                      return (
+                        <td key={name} className="p-3 text-center">
+                          <span className="text-xl font-bold text-purple-600">
+                            ${(price - subsidy).toLocaleString()}
+                          </span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 font-medium">Past Projects</td>
+                    {selectedProviders.map((name) => {
+                      const provider = providers.find((p) => p.name === name)!;
+                      return (
+                        <td key={name} className="p-3 text-center">
+                          {provider.pastProjects}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </div>
-        </Card>
+          </Card>
+        )}
       </div>
     </div>
   );
-}
-
-// Comparison Row Component
-function ComparisonRow({
-  label,
-  icon: Icon,
-  iconColor,
-  values,
-}: {
-  label: string;
-  icon: any;
-  iconColor: string;
-  values: string[];
-}) {
-  return (
-    <div className="grid gap-4 mb-4" style={{ gridTemplateColumns: `200px repeat(${values.length}, 1fr)` }}>
-      <div className="flex items-center gap-2 py-4">
-        <Icon className={`w-5 h-5 ${iconColor}`} />
-        <span className="font-semibold text-sm">{label}</span>
-      </div>
-      {values.map((value, index) => (
-        <Card key={index} className="p-4 flex items-center justify-center">
-          <span className="font-medium text-center">{value}</span>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-// Feature Row Component
-function FeatureRow({ label, values }: { label: string; values: boolean[] }) {
-  return (
-    <div className="grid gap-4 mb-4" style={{ gridTemplateColumns: `200px repeat(${values.length}, 1fr)` }}>
-      <div className="flex items-center py-4">
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-      {values.map((value, index) => (
-        <Card key={index} className="p-4 flex items-center justify-center">
-          {value ? (
-            <CheckCircle2 className="w-6 h-6 text-green-500" />
-          ) : (
-            <XCircle className="w-6 h-6 text-gray-300" />
-          )}
-        </Card>
-      ))}
-    </div>
-);
 }

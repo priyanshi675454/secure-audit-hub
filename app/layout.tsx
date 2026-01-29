@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
+import AIChatbot from "@/components/ui/ai-chatbot";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Navbar />
         {children}
+        <AIChatbot />
       </body>
     </html>
   );

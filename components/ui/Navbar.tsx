@@ -5,12 +5,14 @@ import Link from "next/link";
 import { Menu, X, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Providers", href: "/providers" },
+    { name: "Compare Providers", href: "/compare" },
     { name: "How It Works", href: "/how-it-works" },
     { name: "Resources", href: "/resources" },
     { name: "FAQ", href: "/faq" },
