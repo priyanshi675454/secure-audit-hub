@@ -1017,6 +1017,8 @@ Common errors:
 "process.env.EMAIL_USER is undefined" → Check .env.local exists in root
 "Invalid login" → Regenerate Gmail App Password
 
+npm install jspdf
+
 
 
 
