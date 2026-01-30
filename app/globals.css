@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-solana-purple: #9945FF;
   --color-solana-green: #14F195;
   --color-solana-blue: #00D4FF;

@@ -1,5 +1,3 @@
-// app/apply/page.tsx
-// UPDATED VERSION with immediate email sending
 
 "use client";
 

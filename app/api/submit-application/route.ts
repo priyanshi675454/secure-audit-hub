@@ -1,5 +1,4 @@
-// app/api/submit-application/route.ts
-// FIXED for Next.js environment variables
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';

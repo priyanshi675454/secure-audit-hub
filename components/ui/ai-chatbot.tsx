@@ -1,5 +1,4 @@
-// components/AIChatbot.tsx
-// ENHANCED VERSION - Answers ANY question, not just subsidy-related
+
 
 "use client";
 

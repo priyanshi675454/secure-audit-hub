@@ -1,5 +1,3 @@
-// components/ui/slider.tsx
-// Simple Slider component
 
 "use client";
 
