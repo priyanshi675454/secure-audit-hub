@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Accordion,
   AccordionContent,
@@ -22,12 +23,26 @@ import {
   ArrowRight,
   MessageCircle,
   Lightbulb,
+  Mail,
+  Phone,
+  User,
+  Send,
+  X,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function FAQPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const categories = [
     { id: "all", label: "All Questions", icon: HelpCircle },
@@ -144,6 +159,30 @@ export default function FAQPage() {
     return matchesSearch && matchesCategory;
   });
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Support Request: ${formData.subject}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    );
+    
+    window.location.href = `mailto:secureaudithub@gmail.com?subject=${subject}&body=${body}`;
+
+    // Show success message
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setShowContactForm(false);
+      }, 2000);
+    }, 500);
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-20 px-4">
       <div className="max-w-7xl mx-auto">
@@ -167,6 +206,7 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
+        {/* Search */}
         <Card className="p-6 mb-8 border-2">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -180,6 +220,7 @@ export default function FAQPage() {
           </div>
         </Card>
 
+        {/* Categories */}
         <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
           {categories.map((category) => (
             <Button
@@ -199,6 +240,7 @@ export default function FAQPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* FAQ List */}
           <div className="lg:col-span-2">
             <Card className="p-8 border-2">
               <h2 className="text-2xl font-bold mb-6">
@@ -232,8 +274,10 @@ export default function FAQPage() {
             </Card>
           </div>
 
+          {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="space-y-6 sticky top-24">
+              {/* Stats Card */}
               <Card className="p-6 border-2 bg-gradient-to-br from-purple-50 to-green-50">
                 <h3 className="font-bold text-lg mb-4">Program Stats</h3>
                 <div className="space-y-3">
@@ -256,23 +300,59 @@ export default function FAQPage() {
                 </div>
               </Card>
 
+              {/* Contact Support Card */}
               <Card className="p-6 border-2">
                 <MessageCircle className="w-12 h-12 text-blue-600 mb-4" />
                 <h3 className="font-bold text-lg mb-2">Still Have Questions?</h3>
                 <p className="text-gray-600 text-sm mb-4">
                   Our team is here to help you navigate the program
                 </p>
+
+                {/* Contact Info */}
+                <div className="space-y-3 mb-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3 text-sm">
+                    <User className="w-4 h-4 text-purple-600" />
+                    <span className="font-semibold">Priyanshi Gajjar</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Mail className="w-4 h-4 text-purple-600" />
+                    <a 
+                      href="mailto:secureaudithub@gmail.com" 
+                      className="text-purple-600 hover:underline"
+                    >
+                      secureaudithub@gmail.com
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm">
+                    <Phone className="w-4 h-4 text-purple-600" />
+                    <a 
+                      href="tel:+918200272432" 
+                      className="text-purple-600 hover:underline"
+                    >
+                      +91 8200272432
+                    </a>
+                  </div>
+                </div>
+
                 <Button 
-                  className="w-full bg-gradient-to-r from-orange-600 to-purple-600"
-                  onClick={() => {
-                    window.location.href = "mailto:support@priyanshigajjar46@gmail.com?subject=Support%20Request%20-%20Audit%20Subsidy%20Program&body=Hi%20SecureAuditHub%20Team,%0A%0AI%20have%20a%20question%20about:%0A%0A[Please%20describe%20your%20question%20here]%0A%0AProject%20Name:%20%0AYour%20Email:%20%0A%0AThank%20you!";
-                  }}
+                  className="w-full bg-gradient-to-r from-orange-600 to-purple-600 mb-2"
+                  onClick={() => setShowContactForm(true)}
                 >
-                  Contact Support
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  Send Message
+                  <Send className="w-4 h-4 ml-2" />
+                </Button>
+
+                <Button 
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => window.location.href = "mailto:secureaudithub@gmail.com"}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email Directly
                 </Button>
               </Card>
 
+              {/* Quick Links */}
               <Card className="p-6 border-2">
                 <h3 className="font-bold text-lg mb-4">Quick Links</h3>
                 <div className="space-y-2">
@@ -319,6 +399,7 @@ export default function FAQPage() {
           </div>
         </div>
 
+        {/* CTA */}
         <Card className="mt-16 p-12 bg-gradient-to-r from-orange-600 to-purple-600 text-white border-0">
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold mb-4">Ready to Apply?</h2>
@@ -345,6 +426,103 @@ export default function FAQPage() {
           </div>
         </Card>
       </div>
+
+      {/* Contact Form Modal */}
+      {showContactForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold">Contact Support</h3>
+                <button
+                  onClick={() => setShowContactForm(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {submitSuccess ? (
+                <div className="text-center py-8">
+                  <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h4 className="text-xl font-bold mb-2">Message Sent!</h4>
+                  <p className="text-gray-600">
+                    Your email client should open shortly. If not, please email us directly at secureaudithub@gmail.com
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div>
+                    <label className="block font-semibold mb-2">Your Name</label>
+                    <Input
+                      type="text"
+                      placeholder="Enter your name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold mb-2">Your Email</label>
+                    <Input
+                      type="email"
+                      placeholder="your.email@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold mb-2">Subject</label>
+                    <Input
+                      type="text"
+                      placeholder="What is this about?"
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold mb-2">Message</label>
+                    <Textarea
+                      placeholder="Please describe your question or issue..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      rows={5}
+                      required
+                    />
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>Support Contact:</strong><br />
+                      Priyanshi Gajjar<br />
+                      📧 secureaudithub@gmail.com<br />
+                      📞 +91 8200272432
+                    </p>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-orange-600 to-purple-600 h-12"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                    <Send className="w-4 h-4 ml-2" />
+                  </Button>
+                </form>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
