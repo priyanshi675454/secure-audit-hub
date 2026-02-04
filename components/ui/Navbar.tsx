@@ -39,8 +39,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* DESKTOP NAV - Home starts here, clearly separated */}
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* DESKTOP NAV - centered links with CTA on the right */}
+          <div className="hidden lg:flex flex-1 justify-center items-center space-x-8">
             {uniqueNavLinks.map((link) => (
               <Link
                 key={link.href}
@@ -50,6 +50,8 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+          </div>
+          <div className="hidden lg:flex items-center ml-6">
             <Link href="/apply">
               <Button className="bg-gradient-to-r from-solana-purple to-solana-green hover:opacity-90 transition-opacity shadow-md">
                 Get Started

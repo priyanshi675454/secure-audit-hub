@@ -36,107 +36,139 @@ export default function PreAuditChecklistPage() {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [showShareMenu, setShowShareMenu] = useState(false);
 
+  // High-fidelity, Trident-aware checklist: prioritized entries first
   const checklistItems: ChecklistItem[] = [
-    // TESTING
+    // prioritized Trident-specific entries
     {
       id: "test-1",
       category: "Testing",
-      title: "Comprehensive Unit Tests",
-      description: "Write unit tests for every function with 80%+ code coverage. Test all edge cases, error conditions, and success paths.",
+      title: "80%+ Branch Coverage",
+      description:
+        "Go beyond line coverage. Ensure all logical branches (if/else, match) in your instruction handlers are executed in tests.",
       priority: "critical",
-      resources: ["Anchor Testing Framework", "Solana Test Validator"],
-    },
-    {
-      id: "test-2",
-      category: "Testing",
-      title: "Integration Tests",
-      description: "Test interactions between multiple programs and accounts. Verify cross-program invocations (CPI) work correctly.",
-      priority: "critical",
-      resources: ["Bankrun", "Solana Program Library Tests"],
+      resources: ["cargo-llvm-cov"],
     },
     {
       id: "test-3",
       category: "Testing",
-      title: "Fuzzing Tests",
-      description: "Implement fuzzing over instruction sequences to discover unexpected state transitions and edge cases.",
+      title: "Guided Instruction Fuzzing",
+      description:
+        "Use Trident to define a FuzzTarget that tests sequences of instructions to find state-machine breaks that single unit tests miss.",
+      priority: "critical",
+      resources: ["Trident Fuzzer Documentation"],
+    },
+    {
+      id: "inv-1",
+      category: "Invariants",
+      title: "Explicit Mathematical Invariants",
+      description:
+        "Define and test properties like: 'Pool Assets + Pending Rewards = Total Vault Balance' under all conditions.",
+      priority: "critical",
+    },
+    {
+      id: "inv-5",
+      category: "Invariants",
+      title: "Account-State Invariants",
+      description:
+        "Ensure that 'locked' accounts cannot be closed and that 'authority' fields can never be set to the Zero Address.",
       priority: "high",
-      resources: ["Trident Fuzzer", "Honggfuzz"],
+    },
+    {
+      id: "sec-5",
+      category: "Security",
+      title: "PDA Seed Collision Check",
+      description: "Verify that different seed combinations cannot derive the same PDA (PDA Sharing vulnerability).",
+      priority: "critical",
+    },
+    {
+      id: "sec-6",
+      category: "Security",
+      title: "Re-entrancy & CPI Limits",
+      description:
+        "While Solana has runtime re-entrancy protection, verify that your program handles 'same-account-multiple-pass' logic correctly.",
+      priority: "high",
+    },
+
+    // remaining items (kept from previous list)
+    {
+      id: "test-2",
+      category: "Testing",
+      title: "Integration Tests",
+      description:
+        "Test interactions between multiple programs and accounts. Verify cross-program invocations (CPI) work correctly.",
+      priority: "critical",
+      resources: ["Bankrun", "Solana Program Library Tests"],
     },
     {
       id: "test-4",
       category: "Testing",
       title: "Negative Test Cases",
-      description: "Test that unauthorized actions fail gracefully. Verify all access control mechanisms reject invalid requests.",
+      description:
+        "Test that unauthorized actions fail gracefully. Verify all access control mechanisms reject invalid requests.",
       priority: "high",
-    },
-
-    // INVARIANTS
-    {
-      id: "inv-1",
-      category: "Invariants",
-      title: "Document System Invariants",
-      description: "Explicitly document all invariants: properties that must ALWAYS be true (e.g., 'total supply equals sum of balances').",
-      priority: "critical",
-      resources: ["Formal Verification Guide"],
     },
     {
       id: "inv-2",
       category: "Invariants",
       title: "Verify Mathematical Properties",
-      description: "Ensure calculations are overflow-safe, division handles zero correctly, and rounding doesn't accumulate errors.",
+      description:
+        "Ensure calculations are overflow-safe, division handles zero correctly, and rounding doesn't accumulate errors.",
       priority: "critical",
     },
     {
       id: "inv-3",
       category: "Invariants",
       title: "State Transition Validation",
-      description: "Verify all state transitions are valid. Document allowed transitions and ensure code enforces them.",
+      description:
+        "Verify all state transitions are valid. Document allowed transitions and ensure code enforces them.",
       priority: "high",
     },
     {
       id: "inv-4",
       category: "Invariants",
       title: "Reentrancy Protection",
-      description: "Ensure no reentrancy vulnerabilities exist. Use checks-effects-interactions pattern where applicable.",
+      description:
+        "Ensure no reentrancy vulnerabilities exist. Use checks-effects-interactions pattern where applicable.",
       priority: "critical",
     },
-
-    // CODE QUALITY
     {
       id: "code-1",
       category: "Code Quality",
       title: "Remove Dead Code",
-      description: "Delete unused functions, commented-out code, and obsolete imports. Keep codebase clean and minimal.",
+      description:
+        "Delete unused functions, commented-out code, and obsolete imports. Keep codebase clean and minimal.",
       priority: "medium",
     },
     {
       id: "code-2",
       category: "Code Quality",
       title: "Meaningful Variable Names",
-      description: "Use descriptive names for variables, functions, and accounts. Avoid single letters except for loops.",
+      description:
+        "Use descriptive names for variables, functions, and accounts. Avoid single letters except for loops.",
       priority: "medium",
     },
     {
       id: "code-3",
       category: "Code Quality",
       title: "Comprehensive Comments",
-      description: "Document complex logic, explain WHY (not just what), and add NatSpec-style comments to all public functions.",
+      description:
+        "Document complex logic, explain WHY (not just what), and add NatSpec-style comments to all public functions.",
       priority: "high",
     },
     {
       id: "code-4",
       category: "Code Quality",
       title: "Error Messages",
-      description: "Provide clear, specific error messages. Each error should indicate what failed and why.",
+      description:
+        "Provide clear, specific error messages. Each error should indicate what failed and why.",
       priority: "high",
     },
-
-    // SECURITY
     {
       id: "sec-1",
       category: "Security",
       title: "Access Control Checks",
-      description: "Verify all privileged operations check proper authority. Use Anchor's has_one and constraint macros.",
+      description:
+        "Verify all privileged operations check proper authority. Use Anchor's has_one and constraint macros.",
       priority: "critical",
       resources: ["Anchor Security Best Practices"],
     },
@@ -144,14 +176,16 @@ export default function PreAuditChecklistPage() {
       id: "sec-2",
       category: "Security",
       title: "Account Validation",
-      description: "Validate all account inputs: check ownership, verify PDAs, ensure accounts are initialized correctly.",
+      description:
+        "Validate all account inputs: check ownership, verify PDAs, ensure accounts are initialized correctly.",
       priority: "critical",
     },
     {
       id: "sec-3",
       category: "Security",
       title: "Integer Overflow Protection",
-      description: "Use checked arithmetic everywhere. Never allow unchecked additions, multiplications, or subtractions.",
+      description:
+        "Use checked arithmetic everywhere. Never allow unchecked additions, multiplications, or subtractions.",
       priority: "critical",
       resources: ["Rust Checked Math"],
     },
@@ -159,49 +193,52 @@ export default function PreAuditChecklistPage() {
       id: "sec-4",
       category: "Security",
       title: "Signer Verification",
-      description: "Always verify signers before executing privileged operations. Check is_signer flag on accounts.",
+      description:
+        "Always verify signers before executing privileged operations. Check is_signer flag on accounts.",
       priority: "critical",
     },
-
-    // DOCUMENTATION
     {
       id: "doc-1",
       category: "Documentation",
       title: "README with Setup Instructions",
-      description: "Provide clear build and deployment instructions. Include all dependencies and environment setup.",
+      description:
+        "Provide clear build and deployment instructions. Include all dependencies and environment setup.",
       priority: "high",
     },
     {
       id: "doc-2",
       category: "Documentation",
       title: "Architecture Documentation",
-      description: "Document program architecture, account structures, and instruction flow. Include diagrams if complex.",
+      description:
+        "Document program architecture, account structures, and instruction flow. Include diagrams if complex.",
       priority: "high",
     },
     {
       id: "doc-3",
       category: "Documentation",
       title: "Known Issues List",
-      description: "Document any known limitations, assumptions, or areas of concern. Transparency helps auditors focus.",
+      description:
+        "Document any known limitations, assumptions, or areas of concern. Transparency helps auditors focus.",
       priority: "medium",
     },
-
-    // DEPLOYMENT
     {
       id: "dep-1",
       category: "Deployment",
       title: "Deployment Scripts",
-      description: "Provide automated deployment scripts. Include initialization sequences and migration procedures.",
+      description:
+        "Provide automated deployment scripts. Include initialization sequences and migration procedures.",
       priority: "medium",
     },
     {
       id: "dep-2",
       category: "Deployment",
       title: "Upgrade Mechanism",
-      description: "If using upgradeable programs, document upgrade authority and procedures. Plan for emergency upgrades.",
+      description:
+        "If using upgradeable programs, document upgrade authority and procedures. Plan for emergency upgrades.",
       priority: "high",
     },
   ];
+
 
   const categories = ["Testing", "Invariants", "Code Quality", "Security", "Documentation", "Deployment"];
 
