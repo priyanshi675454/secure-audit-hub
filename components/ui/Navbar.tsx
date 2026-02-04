@@ -26,10 +26,10 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          
+        <div className="flex justify-between items-center h-20 px-6">
+
           {/* LOGO SECTION - Brand stays here */}
-          <Link href="/" className="flex items-center space-x-2 group">
+          <Link href="/" className="flex items-center space-x-2 group mr-12">
             <div className="relative">
               <Shield className="h-8 w-8 text-solana-purple group-hover:scale-110 transition-transform" />
               <div className="absolute inset-0 bg-solana-purple/20 blur-xl group-hover:blur-2xl transition-all" />
@@ -39,8 +39,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* DESKTOP NAV - centered links with CTA on the right */}
-          <div className="hidden lg:flex flex-1 justify-center items-center space-x-8">
+          {/* DESKTOP NAV - left-aligned links (start after logo) */}
+          <div className="hidden md:flex flex-1 justify-start items-center gap-8">
             {uniqueNavLinks.map((link) => (
               <Link
                 key={link.href}
@@ -51,7 +51,7 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <div className="hidden lg:flex items-center ml-6">
+          <div className="hidden md:flex items-center">
             <Link href="/apply">
               <Button className="bg-gradient-to-r from-solana-purple to-solana-green hover:opacity-90 transition-opacity shadow-md">
                 Get Started

@@ -30,6 +30,7 @@ interface ChecklistItem {
   description: string;
   priority: "critical" | "high" | "medium";
   resources?: string[];
+  isTridentRecommended?: boolean;
 }
 
 export default function PreAuditChecklistPage() {
@@ -50,12 +51,12 @@ export default function PreAuditChecklistPage() {
     },
     {
       id: "test-3",
-      category: "Testing",
-      title: "Guided Instruction Fuzzing",
-      description:
-        "Use Trident to define a FuzzTarget that tests sequences of instructions to find state-machine breaks that single unit tests miss.",
-      priority: "critical",
-      resources: ["Trident Fuzzer Documentation"],
+         category: "Testing",
+         title: "Guided Instruction Fuzzing",
+         description: "Use Trident's Manually Guided Fuzzing (MGF) to test sequences of instructions, ensuring the program state remains valid through complex transaction flows.",
+        priority: "critical",
+      isTridentRecommended: true,
+  resources: ["Trident MGF Guide", "Aki Blockchain Blog"],
     },
     {
       id: "inv-1",
@@ -74,11 +75,12 @@ export default function PreAuditChecklistPage() {
       priority: "high",
     },
     {
-      id: "sec-5",
-      category: "Security",
-      title: "PDA Seed Collision Check",
-      description: "Verify that different seed combinations cannot derive the same PDA (PDA Sharing vulnerability).",
+      id: "inv-5",
+       category: "Invariants",
+       title: "Conservation & Ownership Invariants",
+        description: "Explicitly verify that total token supply matches account sums and that account ownership cannot be altered by unauthorized instructions.",
       priority: "critical",
+      isTridentRecommended: true,
     },
     {
       id: "sec-6",
