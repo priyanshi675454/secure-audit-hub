@@ -258,6 +258,29 @@ export default function Home() {
                 </Card>
               </motion.div>
             ))}
+            <motion.div
+              key="pre-audit-checklist"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: features.length * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="p-8 border-2 hover:border-purple-300 transition-all duration-300 group card-hover h-full">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                    <Shield className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Pre-Audit Checklist</h3>
+                  <p className="text-gray-600">
+                    Prepare your code for audit with our comprehensive hardening checklist.
+                    Focus audits on protocol logic, not avoidable bugs.
+                  </p>
+                  <Link href="/pre-audit-checklist" className="text-purple-600 hover:underline mt-2 inline-block">
+                    View Checklist →
+                  </Link>
+                </div>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </section>

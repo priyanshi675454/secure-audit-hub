@@ -16,7 +16,7 @@ export default function AIChatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Hi! I'm your AI assistant. I can help with:\n• Solana Audit Subsidy Program\n• General blockchain/crypto questions\n• Technical development questions\n• Or anything else! What would you like to know?",
+      text: "Hi! I'm your AI assistant. I can help with:\n• Solana Audit Subsidy Program\n• Pre-Audit Checklist\n• General blockchain/crypto questions\n• Technical development questions\n\nWhat would you like to know?",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -33,8 +33,55 @@ export default function AIChatbot() {
     scrollToBottom();
   }, [messages]);
 
+  // Add message with deduplication: remove previous identical message (same sender + same text)
+  const addMessage = (message: Message) => {
+    setMessages((prev) => {
+      const filtered = prev.filter((m) => !(m.sender === message.sender && m.text.trim() === message.text.trim()));
+      return [...filtered, message];
+    });
+  };
+
   const generateResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
+
+    // PRE-AUDIT CHECKLIST QUESTIONS (NEW!)
+    if (
+      lowerMessage.includes("pre-audit") ||
+      lowerMessage.includes("preaudit") ||
+      lowerMessage.includes("checklist") ||
+      lowerMessage.includes("prepare") ||
+      lowerMessage.includes("preparation")
+    ) {
+      return "📋 **Pre-Audit Hardening Checklist:**\n\nOur comprehensive checklist helps you prepare for audit:\n\n**6 Categories:**\n• Testing (unit, integration, fuzzing)\n• Invariants (system properties)\n• Code Quality (clean code)\n• Security (access control, validation)\n• Documentation (README, architecture)\n• Deployment (scripts, upgrades)\n\n21 total items to complete!\n\n👉 Check it out: /pre-audit-checklist\n\nThis ensures auditors focus on protocol logic, not avoidable bugs! 🎯";
+    }
+
+    if (
+      lowerMessage.includes("test") && 
+      (lowerMessage.includes("how") || lowerMessage.includes("should"))
+    ) {
+      return "🧪 **Testing Best Practices:**\n\n1. **Unit Tests:** 80%+ code coverage, test every function\n2. **Integration Tests:** Test cross-program calls (CPI)\n3. **Fuzzing:** Use Trident or Honggfuzz for instruction sequences\n4. **Negative Tests:** Ensure unauthorized actions fail\n\nTools:\n• Anchor Testing Framework\n• Solana Test Validator\n• Bankrun\n\nSee full checklist at /pre-audit-checklist! ✅";
+    }
+
+    if (
+      lowerMessage.includes("invariant") ||
+      lowerMessage.includes("property")
+    ) {
+      return "🎯 **System Invariants:**\n\nInvariants are properties that must ALWAYS be true:\n\n**Examples:**\n• Total supply = sum of all balances\n• Only authorized accounts can mint\n• Math operations never overflow\n• State transitions are valid\n\n**Document these explicitly!**\n\nHelps auditors verify your protocol logic is sound.\n\nMore details: /pre-audit-checklist";
+    }
+
+    if (
+      lowerMessage.includes("fuzz") ||
+      lowerMessage.includes("fuzzing")
+    ) {
+      return "🔍 **Fuzzing for Solana:**\n\nFuzzing tests instruction sequences to find bugs:\n\n**Tools:**\n• Trident Fuzzer (Solana-specific)\n• Honggfuzz\n\n**What it does:**\n• Generates random instruction sequences\n• Discovers unexpected state transitions\n• Finds edge cases you missed\n\n**Why important:**\nCatches bugs that manual tests miss!\n\nLearn more: /pre-audit-checklist";
+    }
+
+    if (
+      lowerMessage.includes("security") && 
+      (lowerMessage.includes("check") || lowerMessage.includes("best"))
+    ) {
+      return "🔒 **Security Checklist:**\n\n**Critical items:**\n1. Access control on all privileged ops\n2. Validate ALL account inputs\n3. Use checked arithmetic (no overflow)\n4. Verify signers before execution\n\n**Use Anchor:**\n• has_one constraints\n• Account validation macros\n• Checked math operations\n\nFull security checklist: /pre-audit-checklist\n\nDon't skip these! 🛡️";
+    }
 
     // SUBSIDY PROGRAM QUESTIONS
     if (
@@ -42,7 +89,7 @@ export default function AIChatbot() {
       lowerMessage.includes("qualify") ||
       lowerMessage.includes("who can apply")
     ) {
-      return "✅ **Eligibility for Solana Audit Subsidy:**\n\nAny Solana-based project can apply! Requirements:\n• Built on Solana blockchain\n• Code ready for audit\n• Planning mainnet launch\n• From any category: DeFi, NFT, Gaming, DAO, Infrastructure\n\nUse our Calculator to estimate your subsidy! 💰";
+      return "✅ **Eligibility for Solana Audit Subsidy:**\n\nAny Solana-based project can apply!\n\n**Requirements:**\n• Built on Solana blockchain\n• Code ready for audit\n• Planning mainnet launch\n• Any category: DeFi, NFT, Gaming, DAO, Infrastructure\n\n**Pro tip:** Complete our Pre-Audit Checklist first!\n👉 /pre-audit-checklist\n\nThen use Calculator to estimate: /calculator 💰";
     }
 
     if (
@@ -51,7 +98,7 @@ export default function AIChatbot() {
       lowerMessage.includes("$") ||
       lowerMessage.includes("range")
     ) {
-      return "💰 **Subsidy Details:**\n\n• Range: $5,000 - $50,000 per project\n• Coverage: Up to 30% of total audit costs\n• Max cap: $50,000\n\nExample: If audit costs $80k, you get $24k subsidy!\n\nTry our Calculator for your estimate! 📊";
+      return "💰 **Subsidy Details:**\n\n• Range: $5,000 - $50,000 per project\n• Coverage: Up to 30% of total audit costs\n• Max cap: $50,000\n\n**Example:**\nAudit costs $80k → You get $24k subsidy!\n\n**Before applying:**\n1. Complete Pre-Audit Checklist (/pre-audit-checklist)\n2. Use Calculator for estimate (/calculator)\n3. Compare providers (/compare)\n\nMaximize your chances! 🎯";
     }
 
     if (
@@ -59,7 +106,7 @@ export default function AIChatbot() {
       lowerMessage.includes("how long") ||
       lowerMessage.includes("when")
     ) {
-      return "⏱️ **Timeline:**\n\n1. Application: 15-30 minutes to complete\n2. Review: 1-2 weeks by expert panel\n3. Approval: Instant notification via email\n4. Marketplace access: Immediate after approval\n5. Audit duration: 3-8 weeks (depends on provider)\n\nTotal: ~2-10 weeks from application to completed audit";
+      return "⏱️ **Timeline:**\n\n**Before Application:**\n• Complete Pre-Audit Checklist (2-4 weeks)\n• Prepare documentation\n\n**Application Process:**\n1. Submit: 15-30 minutes\n2. Review: 1-2 weeks\n3. Approval: Instant notification\n\n**Audit:**\n• Standard: 3-6 weeks\n• Expedited: 2-3 weeks\n• Emergency: < 2 weeks\n\n**Total:** 2-10 weeks from prep to completion\n\nStart early! 🚀";
     }
 
     if (
@@ -67,7 +114,7 @@ export default function AIChatbot() {
       lowerMessage.includes("application") ||
       lowerMessage.includes("how to")
     ) {
-      return "📝 **How to Apply:**\n\n✅ 5 Easy Steps:\n1. Click 'Apply Now' button\n2. Fill project details (5 steps)\n3. Submit application\n4. Get instant email confirmation\n5. Wait 1-2 weeks for review\n\n💡 Tip: Have your GitHub repo, project docs, and team info ready!";
+      return "📝 **How to Apply:**\n\n**BEFORE YOU APPLY:**\n1. Complete Pre-Audit Checklist (/pre-audit-checklist)\n2. Calculate costs (/calculator)\n3. Compare providers (/compare)\n\n**APPLICATION STEPS:**\n1. Click 'Apply Now'\n2. Fill 5-step form\n3. Submit\n4. Get instant email\n5. Wait 1-2 weeks for review\n\n**Have ready:**\n• GitHub repo\n• Project docs\n• Team info\n\nBetter prep = better chances! ✅";
     }
 
     if (
@@ -75,45 +122,44 @@ export default function AIChatbot() {
       lowerMessage.includes("auditor") ||
       lowerMessage.includes("who")
     ) {
-      return "🛡️ **15 Top Audit Providers:**\n\n• Zellic, OtterSec, Certora\n• Hacken, Oak Security, Quantstamp\n• ChainSecurity, Cyfrin, Guardian\n• Hexens, Immunefi, QuillAudits\n• Runtime Verification, Sherlock, Statemind\n\nCheck our Compare page to see detailed comparisons! 🔍";
+      return "🛡️ **15 Top Audit Providers:**\n\n• Zellic, OtterSec, Certora\n• Hacken, Oak Security, Quantstamp\n• ChainSecurity, Cyfrin, Guardian\n• Hexens, Immunefi, QuillAudits\n• Runtime Verification, Sherlock, Statemind\n\n**Compare them:**\n👉 /compare\n\n**Choose based on:**\n• Specialization (DeFi, NFT, etc.)\n• Timeline\n• Pricing\n• Past projects\n\nGet quotes from 2-3 providers! 🔍";
     }
 
     // GENERAL BLOCKCHAIN/CRYPTO QUESTIONS
     if (lowerMessage.includes("solana") && !lowerMessage.includes("subsidy")) {
-      return "⚡ **Solana Overview:**\n\nSolana is a high-performance blockchain known for:\n• Ultra-fast transactions (~65k TPS)\n• Low fees (~$0.00025 per tx)\n• Proof of History + Proof of Stake\n• Growing DeFi & NFT ecosystem\n• Developer-friendly (Rust, C, C++)\n\nWant to learn more about Solana development? Just ask! 🚀";
+      return "⚡ **Solana Overview:**\n\nHigh-performance blockchain:\n• ~65k TPS (fast!)\n• ~$0.00025 per tx (cheap!)\n• Proof of History + PoS\n• Growing DeFi & NFT ecosystem\n• Dev-friendly (Rust, C, C++)\n\n**Building on Solana?**\n1. Complete Pre-Audit Checklist\n2. Get audit subsidy ($5k-$50k)\n3. Launch securely!\n\nWant to learn more? Just ask! 🚀";
     }
 
     if (lowerMessage.includes("smart contract") || lowerMessage.includes("solidity")) {
-      return "📜 **Smart Contracts:**\n\nOn Solana, smart contracts are called 'programs' and written in:\n• Rust (most popular)\n• C/C++\n• Python (Seahorse framework)\n\nKey concepts:\n• Accounts store data\n• Programs are stateless\n• Cross-Program Invocation (CPI)\n\nNeed help with Solana development? Ask away! 💻";
+      return "📜 **Smart Contracts on Solana:**\n\nSolana programs (not contracts) written in:\n• Rust (most popular)\n• C/C++\n• Python (Seahorse)\n\n**Key concepts:**\n• Accounts store data\n• Programs are stateless\n• Cross-Program Invocation (CPI)\n\n**Before audit:**\nComplete Pre-Audit Checklist!\n👉 /pre-audit-checklist\n\nNeed development help? Ask away! 💻";
     }
 
     if (lowerMessage.includes("defi") || lowerMessage.includes("decentralized finance")) {
-      return "💸 **DeFi (Decentralized Finance):**\n\nFinancial services without intermediaries:\n• Lending/Borrowing (Aave, Compound)\n• DEXs (Uniswap, Raydium)\n• Yield Farming\n• Staking\n• Derivatives\n\nOn Solana: Jupiter, Raydium, Orca, Marinade\n\nBuilding DeFi? Get your audit subsidized! 🎯";
+      return "💸 **DeFi (Decentralized Finance):**\n\nFinancial services without intermediaries:\n• Lending/Borrowing\n• DEXs (Decentralized Exchanges)\n• Yield Farming\n• Staking\n• Derivatives\n\n**Solana DeFi:**\nJupiter, Raydium, Orca, Marinade\n\n**Building DeFi?**\n1. Security is CRITICAL\n2. Complete Pre-Audit Checklist\n3. Get audit (use our subsidy!)\n\nDeFi = High risk if not secure! 🎯";
     }
 
     if (lowerMessage.includes("nft") || lowerMessage.includes("non-fungible")) {
-      return "🎨 **NFTs on Solana:**\n\nSolana has vibrant NFT ecosystem:\n• Low minting costs\n• Fast transactions\n• Marketplaces: Magic Eden, Tensor\n• Popular collections: DeGods, Okay Bears\n• Tools: Metaplex, Candy Machine\n\nBuilding NFT project? Audit it with our subsidy! 🖼️";
+      return "🎨 **NFTs on Solana:**\n\nVibrant NFT ecosystem:\n• Low minting costs\n• Fast transactions\n• Marketplaces: Magic Eden, Tensor\n• Popular: DeGods, Okay Bears\n• Tools: Metaplex, Candy Machine\n\n**Building NFT project?**\nEven NFT contracts need security!\n\n1. Pre-Audit Checklist (/pre-audit-checklist)\n2. Audit with subsidy\n3. Launch safely\n\nProtect your users! 🖼️";
     }
 
     if (lowerMessage.includes("web3") || lowerMessage.includes("blockchain")) {
-      return "🌐 **Web3 & Blockchain:**\n\nWeb3 = Decentralized internet built on blockchain\n\nKey features:\n• User ownership of data\n• No central authority\n• Transparent & immutable\n• Crypto-native payments\n\nSolana is perfect for Web3 due to speed & cost! 🚀";
+      return "🌐 **Web3 & Blockchain:**\n\nWeb3 = Decentralized internet on blockchain\n\n**Key features:**\n• User ownership of data\n• No central authority\n• Transparent & immutable\n• Crypto-native payments\n\n**Solana for Web3:**\n• Fast & cheap\n• Developer-friendly\n• Growing ecosystem\n\n**Building Web3?**\nSecurity matters! Check our Pre-Audit Checklist! 🚀";
     }
 
     if (lowerMessage.includes("wallet") || lowerMessage.includes("phantom")) {
-      return "👛 **Solana Wallets:**\n\nPopular options:\n• Phantom (most popular)\n• Solflare\n• Backpack\n• Ledger (hardware)\n• Trezor (hardware)\n\nFor development:\n• @solana/web3.js\n• @solana/wallet-adapter\n\nNeed integration help? Just ask! 🔐";
+      return "👛 **Solana Wallets:**\n\n**Popular:**\n• Phantom (most used)\n• Solflare\n• Backpack\n• Ledger (hardware)\n• Trezor (hardware)\n\n**For development:**\n• @solana/web3.js\n• @solana/wallet-adapter\n\n**Security tip:**\nAlways validate wallet signatures in your program!\n\nSee Security checklist: /pre-audit-checklist 🔐";
     }
 
     // TECHNICAL QUESTIONS
     if (lowerMessage.includes("rust") || lowerMessage.includes("programming")) {
-      return "🦀 **Rust for Solana:**\n\nWhy Rust?\n• Memory safe\n• No garbage collector\n• High performance\n• Great for blockchain\n\nLearning resources:\n• Solana Cookbook\n• Anchor framework\n• Rust Book\n• Solana Program Library\n\nBuilding? Get audit support! 🛠️";
+      return "🦀 **Rust for Solana:**\n\n**Why Rust?**\n• Memory safe\n• No garbage collector\n• High performance\n• Perfect for blockchain\n\n**Learning:**\n• Solana Cookbook\n• Anchor framework\n• Rust Book\n• Solana Program Library\n\n**Before audit:**\nFollow best practices in Pre-Audit Checklist!\n👉 /pre-audit-checklist\n\nBuilding? Get audit support! 🛠️";
     }
 
-    if (lowerMessage.includes("test") || lowerMessage.includes("testing")) {
-      return "🧪 **Testing Smart Contracts:**\n\nBest practices:\n• Unit tests (every function)\n• Integration tests (cross-program)\n• Fuzzing tests\n• Formal verification\n\nTools:\n• Anchor test framework\n• Solana Test Validator\n• Bankrun\n\nGood tests = better audit results! ✅";
-    }
-
-    if (lowerMessage.includes("security") || lowerMessage.includes("hack") || lowerMessage.includes("exploit")) {
-      return "🔒 **Smart Contract Security:**\n\nCommon vulnerabilities:\n• Reentrancy attacks\n• Integer overflow\n• Access control issues\n• Logic errors\n• Oracle manipulation\n\n**Prevention:**\n✅ Professional audit (use our subsidy!)\n✅ Comprehensive testing\n✅ Bug bounties\n✅ Security best practices\n\nDon't skip audits! 🛡️";
+    if (
+      (lowerMessage.includes("access") && lowerMessage.includes("control")) ||
+      lowerMessage.includes("authorization")
+    ) {
+      return "🔐 **Access Control:**\n\n**CRITICAL for security!**\n\n**Best practices:**\n• Use Anchor's has_one\n• Add constraint macros\n• Verify signer flag\n• Check account ownership\n\n**Common mistakes:**\n• Missing authority checks\n• Not verifying signers\n• Improper PDA validation\n\n**Full checklist:**\n👉 /pre-audit-checklist (Security section)\n\nDon't skip this! 🛡️";
     }
 
     // GENERAL QUESTIONS
@@ -122,19 +168,19 @@ export default function AIChatbot() {
       lowerMessage.includes("hi") ||
       lowerMessage.includes("hey")
     ) {
-      return "👋 Hello! How can I help you today?\n\nI can answer questions about:\n• Solana Audit Subsidy Program\n• Blockchain & crypto\n• Solana development\n• Smart contracts\n• Security best practices\n• Or anything else!\n\nWhat would you like to know? 😊";
+      return "👋 Hello! How can I help you today?\n\n**I can answer questions about:**\n• Solana Audit Subsidy Program\n• Pre-Audit Checklist (NEW!)\n• Blockchain & crypto\n• Solana development\n• Smart contracts & security\n• Or anything else!\n\n**Quick links:**\n• Pre-Audit Checklist: /pre-audit-checklist\n• Cost Calculator: /calculator\n• Compare Providers: /compare\n\nWhat would you like to know? 😊";
     }
 
     if (lowerMessage.includes("thank")) {
-      return "You're very welcome! 🎉\n\nHappy to help anytime. Feel free to ask more questions or start your subsidy application!\n\nGood luck with your project! 🚀";
+      return "You're very welcome! 🎉\n\nHappy to help anytime. Remember:\n\n1. Complete Pre-Audit Checklist first\n2. Then apply for subsidy\n3. Get better audit results!\n\nGood luck with your project! 🚀";
     }
 
     if (lowerMessage.includes("help") || lowerMessage.includes("what can you do")) {
-      return "🤖 **I can help with:**\n\n**Subsidy Program:**\n• Eligibility & requirements\n• Application process\n• Audit providers\n• Cost estimates\n\n**Technical:**\n• Solana development\n• Smart contracts\n• Security best practices\n• Testing & deployment\n\n**General:**\n• Blockchain concepts\n• DeFi, NFTs, Web3\n• Solana ecosystem\n\nJust ask anything! 💬";
+      return "🤖 **I can help with:**\n\n**Subsidy Program:**\n• Eligibility & requirements\n• Application process\n• Audit providers\n• Cost estimates\n\n**Pre-Audit Prep (NEW!):**\n• Testing best practices\n• Security checklist\n• Code quality standards\n• Documentation requirements\n\n**Technical:**\n• Solana development\n• Smart contracts\n• Security practices\n• Testing & deployment\n\n**General:**\n• Blockchain concepts\n• DeFi, NFTs, Web3\n\nJust ask anything! 💬";
     }
 
     // DEFAULT - INTELLIGENT FALLBACK
-    return `🤔 That's an interesting question!\n\nWhile I don't have a specific answer for "${userMessage}", I can help with:\n\n📋 **Subsidy Program:**\n• Check our Calculator for cost estimates\n• Compare all 15 audit providers\n• View FAQ for common questions\n\n💬 **Ask me about:**\n• Eligibility & application process\n• Solana development\n• Smart contract security\n• Blockchain concepts\n\nOr contact support: support@secureaudithub.com 📧`;
+    return `🤔 That's an interesting question!\n\nWhile I don't have a specific answer, I can help with:\n\n📋 **New! Pre-Audit Checklist:**\nPrepare your code before audit\n👉 /pre-audit-checklist\n\n💰 **Cost Calculator:**\nEstimate your audit costs\n👉 /calculator\n\n🔍 **Provider Comparison:**\nCompare all 15 auditors\n👉 /compare\n\n💬 **Ask me about:**\n• Solana development\n• Security best practices\n• Testing strategies\n• Subsidy program\n\nOr contact: secureaudithub@gmail.com 📧`;
   };
 
   const handleSend = async () => {
@@ -146,7 +192,8 @@ export default function AIChatbot() {
       sender: "user",
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, userMessage]);
+    // Add with dedupe (remove previous identical user message)
+    addMessage(userMessage);
     setInput("");
     setIsTyping(true);
 
@@ -158,15 +205,16 @@ export default function AIChatbot() {
       sender: "bot",
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, botResponse]);
+    // Add bot message with dedupe (remove previous identical bot message)
+    addMessage(botResponse);
     setIsTyping(false);
   };
 
   const quickQuestions = [
+    "Pre-Audit Checklist?",
     "How much subsidy?",
-    "How to apply?",
-    "What's Solana?",
     "Security tips?",
+    "How to apply?",
   ];
 
   return (
